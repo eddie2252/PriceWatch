@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grocery Price Comparison System</title>
+  <link rel="stylesheet" href="file:///C:/Users/Ryzen/OneDrive/Desktop/GroceryPriceSystem/static/css/style.css">
+</head>
+<body>
+
+  <div class="shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo">Price<span>Watch</span></div>
+        <div class="brand-city">📍 Iligan City</div>
+      </div>
+
+      <nav class="nav">
+        <div class="nav-item active" onclick="showPage('dashboard')">
+          <span class="nav-icon">⬛</span> Dashboard
+        </div>
+        <div class="nav-item" onclick="showPage('stores')">
+          <span class="nav-icon">🏪</span> Store
+        </div>
+        <div class="nav-item" onclick="showPage('products')">
+          <span class="nav-icon">📦</span> Product
+        </div>
+        <div class="nav-item" onclick="showPage('categories')">
+          <span class="nav-icon">🏷️</span> Categories
+        </div>
+        <div class="nav-item" onclick="showPage('price_comparison')">
+          <span class="nav-icon">⚖️</span> Price Comparison
+        </div>
+        <div class="nav-item" onclick="showPage('price_history')">
+          <span class="nav-icon">📅</span> Price Record
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="nav-item logout" onclick="confirmLogout()">
+          <span class="nav-icon">🚪</span> Logout
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+      <!-- ══ DASHBOARD PAGE ══ -->
+      <div class="page active" id="page-dashboard">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Price <span>Overview</span></div>
+            <div class="page-sub">Tracking groceries across Iligan City</div>
+          </div>
+          <div class="topbar-right">
+            <div class="date-chip" id="current-date"></div>
+          </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Products</div>
+            <div class="stat-value green" id="stat-products">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Stores Tracked</div>
+            <div class="stat-value green" id="stat-stores">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Price Recorded</div>
+            <div class="stat-value green" id="stat-prices">0</div>
+          </div>
+        </div>
+
+        <!-- RECENT PRICES + CATEGORIES -->
+        <div class="dashboard-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Recent Price Records</div>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Store</th>
+                  <th>Price</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="dashboard-recent-table">
+                <tr><td colspan="4" class="empty-msg">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Categories</div>
+              <span class="panel-action" onclick="showPage('categories')">Manage →</span>
+            </div>
+            <table class="tbl">
+              <thead>
+                <tr><th>Category</th><th>Description</th></tr>
+              </thead>
+              <tbody id="dashboard-categories-table">
+                <tr><td colspan="2" class="empty-msg">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STORES PAGE ══ -->
+      <div class="page" id="page-stores">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Store <span>Management</span></div>
+            <div class="page-sub">Manage grocery stores in Iligan City — <span id="stores-count" class="count-badge">0 stores</span></div>
+          </div>
+          <div class="topbar-right">
+            <input class="search-input" type="text" placeholder="🔍 Search stores..." oninput="filterTable('stores-table', this.value)">
+            <button class="btn-primary" onclick="showModal('modal-store-add')">＋ Add Store</button>
+          </div>
+        </div>
+        <div class="panel">
+          <table class="tbl" id="stores-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Store Name</th>
+                <th>Type</th>
+                <th>Barangay</th>
+                <th>Street</th>
+                <th>Contact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="stores-tbody">
+              <tr><td colspan="7" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PRODUCTS PAGE ══ -->
+      <div class="page" id="page-products">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Product <span>Catalog</span></div>
+            <div class="page-sub">Manage grocery products — <span id="products-count" class="count-badge">0 products</span></div>
+          </div>
+          <div class="topbar-right">
+            <input class="search-input" type="text" placeholder="🔍 Search products..." oninput="filterTable('products-table', this.value)">
+            <button class="btn-primary" onclick="showModal('modal-product-add')">＋ Add Product</button>
+          </div>
+        </div>
+        <div class="panel">
+          <table class="tbl" id="products-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Brand</th>
+                <th>Unit</th>
+                <th>Categories</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <tr><td colspan="6" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ CATEGORIES PAGE ══ -->
+      <div class="page" id="page-categories">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Category <span>Management</span></div>
+            <div class="page-sub">Manage product categories — <span id="categories-count" class="count-badge">0 categories</span></div>
+          </div>
+          <div class="topbar-right">
+            <input class="search-input" type="text" placeholder="🔍 Search categories..." oninput="filterTable('categories-table', this.value)">
+            <button class="btn-primary" onclick="showModal('modal-category-add')">＋ Add Category</button>
+          </div>
+        </div>
+        <div class="panel">
+          <table class="tbl" id="categories-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="categories-tbody">
+              <tr><td colspan="4" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PRICE COMPARISON PAGE ══ -->
+      <div class="page" id="page-price_comparison">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Price <span>Comparison</span></div>
+            <div class="page-sub">Compare prices across all stores</div>
+          </div>
+          <div class="topbar-right">
+            <input class="search-input" type="text" placeholder="🔍 Search product..." oninput="filterTable('comparison-table', this.value)">
+          </div>
+        </div>
+        <div class="panel">
+          <table class="tbl" id="comparison-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Unit</th>
+                <th>Store</th>
+                <th>Price</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="comparison-tbody">
+              <tr><td colspan="5" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ══ PRICE HISTORY PAGE ══ -->
+      <div class="page" id="page-price_history">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Price <span>Record</span></div>
+            <div class="page-sub">All recorded prices — <span id="history-count" class="count-badge">0 records</span></div>
+          </div>
+          <div class="topbar-right">
+            <input class="search-input" type="text" placeholder="🔍 Search..." oninput="filterTable('history-table', this.value)">
+            <button class="btn-primary" onclick="openAddPriceModal()">＋ Record Price</button>
+          </div>
+        </div>
+        <div class="panel">
+          <table class="tbl" id="history-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Store</th>
+                <th>Unit</th>
+                <th>Price</th>
+                <th>Date Recorded</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr><td colspan="6" class="empty-msg">Loading...</td></tr>
+            </tbody>
+          </table>
+            <div class="pagination-row">
+               <span id="pagination-info" class="pag-text"></span>
+                <div id="pagination-controls"></div>
+            </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- MODALS -->
+  <!-- ══════════════════════════════════════ -->
+
+  <!-- STORE ADD -->
+  <div class="overlay" id="modal-store-add">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Add Store</div>
+        <div class="modal-close" onclick="hideModal('modal-store-add')">✕</div>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Store Name *</label><input type="text" id="add-store-name" placeholder="e.g. Gaisano Mall Iligan"></div>
+        <div class="field"><label>Store Type *</label>
+          <select id="add-store-type">
+            <option value="" disabled selected>Select type...</option>
+            <option>Supermarket</option>
+            <option>Mall</option>
+            <option>Local Market</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Street</label><input type="text" id="add-store-street" placeholder="e.g. Roxas Avenue"></div>
+          <div class="field"><label>Barangay *</label><input type="text" id="add-store-barangay" placeholder="e.g. Villaverde"></div>
+        </div>
+        <div class="field"><label>Contact Number</label><input type="text" id="add-store-contact" placeholder="e.g. 0915 567 6149"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-store-add')">Cancel</button>
+        <button class="btn-primary" onclick="submitAddStore()">＋ Add Store</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE EDIT -->
+  <div class="overlay" id="modal-store-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Edit Store</div>
+        <div class="modal-close" onclick="hideModal('modal-store-edit')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-store-id">
+        <div class="field"><label>Store Name *</label><input type="text" id="edit-store-name"></div>
+        <div class="field"><label>Store Type *</label>
+          <select id="edit-store-type">
+            <option>Supermarket</option>
+            <option>Mall</option>
+            <option>Local Market</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Street</label><input type="text" id="edit-store-street"></div>
+          <div class="field"><label>Barangay *</label><input type="text" id="edit-store-barangay"></div>
+        </div>
+        <div class="field"><label>Contact Number</label><input type="text" id="edit-store-contact"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-store-edit')">Cancel</button>
+        <button class="btn-edit" onclick="submitEditStore()">✏️ Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STORE DELETE -->
+  <div class="overlay" id="modal-store-delete">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">Delete Store</div>
+        <div class="modal-close" onclick="hideModal('modal-store-delete')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete-store-id">
+        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-store-name"></strong>? All price records for this store will also be deleted.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-store-delete')">Cancel</button>
+        <button class="btn-delete" onclick="submitDeleteStore()">🗑️ Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY ADD -->
+  <div class="overlay" id="modal-category-add">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Add Category</div>
+        <div class="modal-close" onclick="hideModal('modal-category-add')">✕</div>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Category Name *</label><input type="text" id="add-cat-name" placeholder="e.g. Canned Goods"></div>
+        <div class="field"><label>Description</label><textarea id="add-cat-desc" placeholder="Brief description..."></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-category-add')">Cancel</button>
+        <button class="btn-primary" onclick="submitAddCategory()">＋ Add Category</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY EDIT -->
+  <div class="overlay" id="modal-category-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Edit Category</div>
+        <div class="modal-close" onclick="hideModal('modal-category-edit')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-cat-id">
+        <div class="field"><label>Category Name *</label><input type="text" id="edit-cat-name"></div>
+        <div class="field"><label>Description</label><textarea id="edit-cat-desc"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-category-edit')">Cancel</button>
+        <button class="btn-edit" onclick="submitEditCategory()">✏️ Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CATEGORY DELETE -->
+  <div class="overlay" id="modal-category-delete">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">Delete Category</div>
+        <div class="modal-close" onclick="hideModal('modal-category-delete')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete-cat-id">
+        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-cat-name"></strong>?</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-category-delete')">Cancel</button>
+        <button class="btn-delete" onclick="submitDeleteCategory()">🗑️ Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT ADD -->
+  <div class="overlay" id="modal-product-add">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Add Product</div>
+        <div class="modal-close" onclick="hideModal('modal-product-add')">✕</div>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Product Name *</label><input type="text" id="add-prod-name" placeholder="e.g. Lucky Me Pancit Canton"></div>
+        <div class="field-row">
+          <div class="field"><label>Brand *</label><input type="text" id="add-prod-brand" placeholder="e.g. Lucky Me"></div>
+          <div class="field"><label>Unit *</label><input type="text" id="add-prod-unit" placeholder="e.g. per piece"></div>
+        </div>
+        <div class="field"><label>Categories *</label><div id="add-prod-categories" class="checkbox-group"></div></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-product-add')">Cancel</button>
+        <button class="btn-primary" onclick="submitAddProduct()">＋ Add Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT EDIT -->
+  <div class="overlay" id="modal-product-edit">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Edit Product</div>
+        <div class="modal-close" onclick="hideModal('modal-product-edit')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-prod-id">
+        <div class="field"><label>Product Name *</label><input type="text" id="edit-prod-name"></div>
+        <div class="field-row">
+          <div class="field"><label>Brand *</label><input type="text" id="edit-prod-brand"></div>
+          <div class="field"><label>Unit *</label><input type="text" id="edit-prod-unit"></div>
+        </div>
+        <div class="field"><label>Categories *</label><div id="edit-prod-categories" class="checkbox-group"></div></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-product-edit')">Cancel</button>
+        <button class="btn-edit" onclick="submitEditProduct()">✏️ Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRODUCT DELETE -->
+  <div class="overlay" id="modal-product-delete">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">Delete Product</div>
+        <div class="modal-close" onclick="hideModal('modal-product-delete')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete-prod-id">
+        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-prod-name"></strong>? All price records will also be deleted.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-product-delete')">Cancel</button>
+        <button class="btn-delete" onclick="submitDeleteProduct()">🗑️ Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICE ADD -->
+  <div class="overlay" id="modal-price-add">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Record Price</div>
+        <div class="modal-close" onclick="hideModal('modal-price-add')">✕</div>
+      </div>
+      <div class="modal-body">
+        <div class="field"><label>Store *</label>
+          <select id="add-price-store"></select>
+        </div>
+        <div class="field"><label>Product *</label>
+          <select id="add-price-product"></select>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Price (₱) *</label><input type="number" id="add-price-amount" placeholder="e.g. 52.00" step="0.01"></div>
+          <div class="field"><label>Date Recorded *</label><input type="date" id="add-price-date"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-price-add')">Cancel</button>
+        <button class="btn-primary" onclick="submitAddPrice()">＋ Record Price</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICE DELETE -->
+  <div class="overlay" id="modal-price-delete">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">Delete Price Record</div>
+        <div class="modal-close" onclick="hideModal('modal-price-delete')">✕</div>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete-price-store-id">
+        <input type="hidden" id="delete-price-product-id">
+        <input type="hidden" id="delete-price-date">
+        <div class="warn-box">⚠️ Are you sure you want to delete this price record?</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="hideModal('modal-price-delete')">Cancel</button>
+        <button class="btn-delete" onclick="submitDeletePrice()">🗑️ Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="file:///C:/Users/Ryzen/OneDrive/Desktop/GroceryPriceSystem/static/js/main.js"></script>
+</body>
+</html>
