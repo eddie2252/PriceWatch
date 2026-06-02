@@ -18,6 +18,14 @@ window.addEventListener('pywebviewready', function () {
 });
 
 // ─── DATE ─────────────────────────────────────
+function formatDate(dateStr) {
+  if (!dateStr) return '—';
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric', month: 'short', day: 'numeric'
+  });
+}
+
 function setCurrentDate() {
   const now = new Date();
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -159,7 +167,7 @@ function loadDashboard() {
         <tr>
           <td>${r.product_name}</td>
           <td>${r.store_name}</td>
-          <td class="price-low">₱${parseFloat(r.price).toFixed(2)}</td>
+          <td class="price-col price-low">₱${parseFloat(r.price).toFixed(2)}</td>
           <td>${r.date_recorded}</td>
         </tr>
       `).join('');
@@ -619,7 +627,7 @@ function renderPriceHistoryPage() {
       <td>${p.store_name}</td>
       <td><span class="badge badge-blue">${p.product_unit}</span></td>
       <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
-      <td>${p.date_recorded}</td>
+      <td>${formatDate(p.date_recorded)}</td>
       <td>
         <div class="action-row">
           <div class="act-btn del"
@@ -783,7 +791,7 @@ function loadPriceComparison() {
             ₱${parseFloat(p.price).toFixed(2)}
             <span style="margin-left:6px">${badge}</span>
           </td>
-          <td>${p.date_recorded}</td>
+          <td>${formatDate(p.date_recorded)}</td>
         </tr>
       `;
     }).join('');
