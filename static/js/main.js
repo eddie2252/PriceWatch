@@ -250,12 +250,18 @@ function submitAddStore() {
 function openEditStore(storeId) {
   const s = allStores.find(x => x.store_id === storeId);
   if (!s) return;
-  document.getElementById('edit-store-id').value      = s.store_id;
-  document.getElementById('edit-store-name').value    = s.store_name;
-  document.getElementById('edit-store-type').value    = s.store_type;
-  document.getElementById('edit-store-street').value  = s.street || '';
+  document.getElementById('edit-store-id').value       = s.store_id;
+  document.getElementById('edit-store-name').value     = s.store_name;
+  document.getElementById('edit-store-type').value     = s.store_type;
+  document.getElementById('edit-store-street').value   = s.street || '';
   document.getElementById('edit-store-barangay').value = s.barangay;
-  document.getElementById('edit-store-contact').value = s.contact_number || '';
+  document.getElementById('edit-store-contact').value  = s.contact_number || '';
+
+  // Preview
+  document.getElementById('edit-store-preview-name').textContent = s.store_name;
+  document.getElementById('edit-store-preview-meta').textContent =
+    s.store_type + ' • ' + s.barangay;
+
   showModal('modal-store-edit');
 }
 
@@ -373,6 +379,12 @@ function openEditCategory(catId) {
   document.getElementById('edit-cat-id').value   = c.category_id;
   document.getElementById('edit-cat-name').value = c.category_name;
   document.getElementById('edit-cat-desc').value = c.category_description || '';
+
+  // Preview
+  document.getElementById('edit-cat-preview-name').textContent = c.category_name;
+  document.getElementById('edit-cat-preview-meta').textContent =
+    c.category_description || 'No description';
+
   showModal('modal-category-edit');
 }
 
@@ -500,6 +512,11 @@ function openEditProduct(prodId) {
   document.getElementById('edit-prod-name').value  = p.product_name;
   document.getElementById('edit-prod-brand').value = p.product_brand;
   document.getElementById('edit-prod-unit').value  = p.product_unit;
+
+  // Preview
+  document.getElementById('edit-prod-preview-name').textContent = p.product_name;
+  document.getElementById('edit-prod-preview-meta').textContent =
+    p.product_brand + ' • ' + p.product_unit;
 
   const currentCats = (p.categories || '').split(', ');
   document.querySelectorAll('#edit-prod-categories input[type="checkbox"]').forEach(cb => {

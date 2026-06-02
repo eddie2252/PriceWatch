@@ -306,20 +306,30 @@
     </main>
   </div>
 
-  <!-- ══════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════ -->
   <!-- MODALS -->
-  <!-- ══════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════ -->
 
   <!-- STORE ADD -->
   <div class="overlay" id="modal-store-add">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add Store</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🏪</span>
+          <div>
+            <div class="modal-title">Add Store</div>
+            <div class="modal-subtitle">Register a new store in Iligan City</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-store-add')">✕</div>
       </div>
       <div class="modal-body">
-        <div class="field"><label>Store Name *</label><input type="text" id="add-store-name" placeholder="e.g. Gaisano Mall Iligan"></div>
-        <div class="field"><label>Store Type *</label>
+        <div class="field">
+          <label>Store Name <span class="req">*</span></label>
+          <input type="text" id="add-store-name" placeholder="e.g. Gaisano Mall Iligan">
+        </div>
+        <div class="field">
+          <label>Store Type <span class="req">*</span></label>
           <select id="add-store-type">
             <option value="" disabled selected>Select type...</option>
             <option>Supermarket</option>
@@ -328,10 +338,19 @@
           </select>
         </div>
         <div class="field-row">
-          <div class="field"><label>Street</label><input type="text" id="add-store-street" placeholder="e.g. Roxas Avenue"></div>
-          <div class="field"><label>Barangay *</label><input type="text" id="add-store-barangay" placeholder="e.g. Villaverde"></div>
+          <div class="field">
+            <label>Street</label>
+            <input type="text" id="add-store-street" placeholder="e.g. Roxas Avenue">
+          </div>
+          <div class="field">
+            <label>Barangay <span class="req">*</span></label>
+            <input type="text" id="add-store-barangay" placeholder="e.g. Villaverde">
+          </div>
         </div>
-        <div class="field"><label>Contact Number</label><input type="text" id="add-store-contact" placeholder="e.g. 0915 567 6149"></div>
+        <div class="field">
+          <label>Contact Number</label>
+          <input type="text" id="add-store-contact" placeholder="e.g. 0915 567 6149">
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-add')">Cancel</button>
@@ -344,13 +363,31 @@
   <div class="overlay" id="modal-store-edit">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Edit Store</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">✏️</span>
+          <div>
+            <div class="modal-title">Edit Store</div>
+            <div class="modal-subtitle">Update store information</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-store-edit')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-store-id">
-        <div class="field"><label>Store Name *</label><input type="text" id="edit-store-name"></div>
-        <div class="field"><label>Store Type *</label>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">🏬</span>
+          <div>
+            <div class="modal-preview-name" id="edit-store-preview-name"></div>
+            <div class="modal-preview-meta" id="edit-store-preview-meta"></div>
+          </div>
+          <span class="modal-preview-badge">Editing</span>
+        </div>
+        <div class="field">
+          <label>Store Name <span class="req">*</span></label>
+          <input type="text" id="edit-store-name">
+        </div>
+        <div class="field">
+          <label>Store Type <span class="req">*</span></label>
           <select id="edit-store-type">
             <option>Supermarket</option>
             <option>Mall</option>
@@ -358,10 +395,19 @@
           </select>
         </div>
         <div class="field-row">
-          <div class="field"><label>Street</label><input type="text" id="edit-store-street"></div>
-          <div class="field"><label>Barangay *</label><input type="text" id="edit-store-barangay"></div>
+          <div class="field">
+            <label>Street</label>
+            <input type="text" id="edit-store-street">
+          </div>
+          <div class="field">
+            <label>Barangay <span class="req">*</span></label>
+            <input type="text" id="edit-store-barangay">
+          </div>
         </div>
-        <div class="field"><label>Contact Number</label><input type="text" id="edit-store-contact"></div>
+        <div class="field">
+          <label>Contact Number</label>
+          <input type="text" id="edit-store-contact">
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-edit')">Cancel</button>
@@ -373,13 +419,30 @@
   <!-- STORE DELETE -->
   <div class="overlay" id="modal-store-delete">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <div class="modal-title">Delete Store</div>
+      <div class="modal-header danger">
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🗑️</span>
+          <div>
+            <div class="modal-title">Delete Store</div>
+            <div class="modal-subtitle">This action cannot be undone</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-store-delete')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="delete-store-id">
-        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-store-name"></strong>? All price records for this store will also be deleted.</div>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">🏬</span>
+          <div>
+            <div class="modal-preview-name" id="delete-store-name"></div>
+            <div class="modal-preview-meta">All price records will be deleted</div>
+          </div>
+          <span class="modal-preview-badge danger">Deleting</span>
+        </div>
+        <div class="warn-box">
+          ⚠️ Are you sure you want to delete this store?
+          All price records for this store will also be permanently removed.
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-delete')">Cancel</button>
@@ -392,12 +455,25 @@
   <div class="overlay" id="modal-category-add">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add Category</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🏷️</span>
+          <div>
+            <div class="modal-title">Add Category</div>
+            <div class="modal-subtitle">Create a new product category</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-category-add')">✕</div>
       </div>
       <div class="modal-body">
-        <div class="field"><label>Category Name *</label><input type="text" id="add-cat-name" placeholder="e.g. Canned Goods"></div>
-        <div class="field"><label>Description</label><textarea id="add-cat-desc" placeholder="Brief description..."></textarea></div>
+        <div class="field">
+          <label>Category Name <span class="req">*</span></label>
+          <input type="text" id="add-cat-name" placeholder="e.g. Rice & Grains">
+          <div class="field-hint">Must be unique across all categories</div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="add-cat-desc" placeholder="Brief description of what this category covers..."></textarea>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-add')">Cancel</button>
@@ -410,13 +486,34 @@
   <div class="overlay" id="modal-category-edit">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Edit Category</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">✏️</span>
+          <div>
+            <div class="modal-title">Edit Category</div>
+            <div class="modal-subtitle">Update this category information</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-category-edit')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-cat-id">
-        <div class="field"><label>Category Name *</label><input type="text" id="edit-cat-name"></div>
-        <div class="field"><label>Description</label><textarea id="edit-cat-desc"></textarea></div>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">🏷️</span>
+          <div>
+            <div class="modal-preview-name" id="edit-cat-preview-name"></div>
+            <div class="modal-preview-meta" id="edit-cat-preview-meta"></div>
+          </div>
+          <span class="modal-preview-badge">Editing</span>
+        </div>
+        <div class="field">
+          <label>Category Name <span class="req">*</span></label>
+          <input type="text" id="edit-cat-name" placeholder="e.g. Rice & Grains">
+          <div class="field-hint">Must be unique across all categories</div>
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <textarea id="edit-cat-desc" placeholder="Brief description of what this category covers..."></textarea>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-edit')">Cancel</button>
@@ -428,13 +525,27 @@
   <!-- CATEGORY DELETE -->
   <div class="overlay" id="modal-category-delete">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <div class="modal-title">Delete Category</div>
+      <div class="modal-header danger">
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🗑️</span>
+          <div>
+            <div class="modal-title">Delete Category</div>
+            <div class="modal-subtitle">This action cannot be undone</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-category-delete')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="delete-cat-id">
-        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-cat-name"></strong>?</div>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">🏷️</span>
+          <div>
+            <div class="modal-preview-name" id="delete-cat-name"></div>
+            <div class="modal-preview-meta">Products will lose this category</div>
+          </div>
+          <span class="modal-preview-badge danger">Deleting</span>
+        </div>
+        <div class="warn-box">⚠️ Are you sure you want to delete this category?</div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-delete')">Cancel</button>
@@ -447,16 +558,34 @@
   <div class="overlay" id="modal-product-add">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Add Product</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">📦</span>
+          <div>
+            <div class="modal-title">Add Product</div>
+            <div class="modal-subtitle">Register a new grocery product</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-product-add')">✕</div>
       </div>
       <div class="modal-body">
-        <div class="field"><label>Product Name *</label><input type="text" id="add-prod-name" placeholder="e.g. Lucky Me Pancit Canton"></div>
-        <div class="field-row">
-          <div class="field"><label>Brand *</label><input type="text" id="add-prod-brand" placeholder="e.g. Lucky Me"></div>
-          <div class="field"><label>Unit *</label><input type="text" id="add-prod-unit" placeholder="e.g. per piece"></div>
+        <div class="field">
+          <label>Product Name <span class="req">*</span></label>
+          <input type="text" id="add-prod-name" placeholder="e.g. Lucky Me Pancit Canton">
         </div>
-        <div class="field"><label>Categories *</label><div id="add-prod-categories" class="checkbox-group"></div></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Brand <span class="req">*</span></label>
+            <input type="text" id="add-prod-brand" placeholder="e.g. Lucky Me">
+          </div>
+          <div class="field">
+            <label>Unit <span class="req">*</span></label>
+            <input type="text" id="add-prod-unit" placeholder="e.g. per piece">
+          </div>
+        </div>
+        <div class="field">
+          <label>Categories <span class="req">*</span></label>
+          <div id="add-prod-categories" class="checkbox-group"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-add')">Cancel</button>
@@ -469,17 +598,43 @@
   <div class="overlay" id="modal-product-edit">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Edit Product</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">✏️</span>
+          <div>
+            <div class="modal-title">Edit Product</div>
+            <div class="modal-subtitle">Update product information</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-product-edit')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-prod-id">
-        <div class="field"><label>Product Name *</label><input type="text" id="edit-prod-name"></div>
-        <div class="field-row">
-          <div class="field"><label>Brand *</label><input type="text" id="edit-prod-brand"></div>
-          <div class="field"><label>Unit *</label><input type="text" id="edit-prod-unit"></div>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">📦</span>
+          <div>
+            <div class="modal-preview-name" id="edit-prod-preview-name"></div>
+            <div class="modal-preview-meta" id="edit-prod-preview-meta"></div>
+          </div>
+          <span class="modal-preview-badge">Editing</span>
         </div>
-        <div class="field"><label>Categories *</label><div id="edit-prod-categories" class="checkbox-group"></div></div>
+        <div class="field">
+          <label>Product Name <span class="req">*</span></label>
+          <input type="text" id="edit-prod-name">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Brand <span class="req">*</span></label>
+            <input type="text" id="edit-prod-brand">
+          </div>
+          <div class="field">
+            <label>Unit <span class="req">*</span></label>
+            <input type="text" id="edit-prod-unit">
+          </div>
+        </div>
+        <div class="field">
+          <label>Categories <span class="req">*</span></label>
+          <div id="edit-prod-categories" class="checkbox-group"></div>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-edit')">Cancel</button>
@@ -491,13 +646,27 @@
   <!-- PRODUCT DELETE -->
   <div class="overlay" id="modal-product-delete">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <div class="modal-title">Delete Product</div>
+      <div class="modal-header danger">
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🗑️</span>
+          <div>
+            <div class="modal-title">Delete Product</div>
+            <div class="modal-subtitle">This action cannot be undone</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-product-delete')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="delete-prod-id">
-        <div class="warn-box">⚠️ Are you sure you want to delete <strong id="delete-prod-name"></strong>? All price records will also be deleted.</div>
+        <div class="modal-preview">
+          <span class="modal-preview-icon">📦</span>
+          <div>
+            <div class="modal-preview-name" id="delete-prod-name"></div>
+            <div class="modal-preview-meta">All price records will be deleted</div>
+          </div>
+          <span class="modal-preview-badge danger">Deleting</span>
+        </div>
+        <div class="warn-box">⚠️ Are you sure? All price records for this product will also be permanently removed.</div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-delete')">Cancel</button>
@@ -510,19 +679,33 @@
   <div class="overlay" id="modal-price-add">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">Record Price</div>
+        <div class="modal-header-left">
+          <span class="modal-header-icon">💰</span>
+          <div>
+            <div class="modal-title">Record Price</div>
+            <div class="modal-subtitle">Add a new price observation</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-price-add')">✕</div>
       </div>
       <div class="modal-body">
-        <div class="field"><label>Store *</label>
+        <div class="field">
+          <label>Store <span class="req">*</span></label>
           <select id="add-price-store"></select>
         </div>
-        <div class="field"><label>Product *</label>
+        <div class="field">
+          <label>Product <span class="req">*</span></label>
           <select id="add-price-product"></select>
         </div>
         <div class="field-row">
-          <div class="field"><label>Price (₱) *</label><input type="number" id="add-price-amount" placeholder="e.g. 52.00" step="0.01"></div>
-          <div class="field"><label>Date Recorded *</label><input type="date" id="add-price-date"></div>
+          <div class="field">
+            <label>Price (₱) <span class="req">*</span></label>
+            <input type="number" id="add-price-amount" placeholder="e.g. 52.00" step="0.01" min="0">
+          </div>
+          <div class="field">
+            <label>Date Recorded <span class="req">*</span></label>
+            <input type="date" id="add-price-date">
+          </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -535,15 +718,21 @@
   <!-- PRICE DELETE -->
   <div class="overlay" id="modal-price-delete">
     <div class="modal modal-sm">
-      <div class="modal-header">
-        <div class="modal-title">Delete Price Record</div>
+      <div class="modal-header danger">
+        <div class="modal-header-left">
+          <span class="modal-header-icon">🗑️</span>
+          <div>
+            <div class="modal-title">Delete Price Record</div>
+            <div class="modal-subtitle">This action cannot be undone</div>
+          </div>
+        </div>
         <div class="modal-close" onclick="hideModal('modal-price-delete')">✕</div>
       </div>
       <div class="modal-body">
         <input type="hidden" id="delete-price-store-id">
         <input type="hidden" id="delete-price-product-id">
         <input type="hidden" id="delete-price-date">
-        <div class="warn-box">⚠️ Are you sure you want to delete this price record?</div>
+        <div class="warn-box">⚠️ Are you sure you want to delete this price record? This cannot be recovered.</div>
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-price-delete')">Cancel</button>
