@@ -163,7 +163,10 @@
             <div class="page-sub">Manage grocery stores in Iligan City — <span id="stores-count" class="count-badge">0 stores</span></div>
           </div>
           <div class="topbar-right">
-            <input class="search-input" type="text" placeholder="🔍 Search stores..." oninput="filterTable('stores-table', this.value)">
+            <div class="search-wrapper">
+              <i data-lucide="search"></i>
+              <input class="search-input" type="text" placeholder="Search stores..." oninput="filterTable('stores-table', this.value)">
+            </div>
             <button class="btn-primary" onclick="showModal('modal-store-add')">＋ Add Store</button>
           </div>
         </div>
@@ -195,7 +198,10 @@
             <div class="page-sub">Manage grocery products — <span id="products-count" class="count-badge">0 products</span></div>
           </div>
           <div class="topbar-right">
-            <input class="search-input" type="text" placeholder="🔍 Search products..." oninput="filterTable('products-table', this.value)">
+            <div class="search-wrapper">
+              <i data-lucide="search"></i>
+              <input class="search-input" type="text" placeholder="Search products..." oninput="filterTable('products-table', this.value)">
+            </div>
             <button class="btn-primary" onclick="showModal('modal-product-add')">＋ Add Product</button>
           </div>
         </div>
@@ -226,7 +232,10 @@
             <div class="page-sub">Manage product categories — <span id="categories-count" class="count-badge">0 categories</span></div>
           </div>
           <div class="topbar-right">
-            <input class="search-input" type="text" placeholder="🔍 Search categories..." oninput="filterTable('categories-table', this.value)">
+            <div class="search-wrapper">
+              <i data-lucide="search"></i>
+              <input class="search-input" type="text" placeholder="Search categories..." oninput="filterTable('categories-table', this.value)">
+            </div>
             <button class="btn-primary" onclick="showModal('modal-category-add')">＋ Add Category</button>
           </div>
         </div>
@@ -255,7 +264,10 @@
             <div class="page-sub">Compare prices across all stores</div>
           </div>
           <div class="topbar-right">
-            <input class="search-input" type="text" placeholder="🔍 Search product..." oninput="filterTable('comparison-table', this.value)">
+            <div class="search-wrapper">
+              <i data-lucide="search"></i>
+              <input class="search-input" type="text" placeholder="Search products..." oninput="filterTable('comparison-table', this.value)">
+          </div>
           </div>
         </div>
         <div class="panel">
@@ -284,7 +296,10 @@
             <div class="page-sub">All recorded prices — <span id="history-count" class="count-badge">0 records</span></div>
           </div>
           <div class="topbar-right">
-            <input class="search-input" type="text" placeholder="🔍 Search..." oninput="filterTable('history-table', this.value)">
+            <div class="search-wrapper">
+              <i data-lucide="search"></i>
+              <input class="search-input" type="text" placeholder="Search records..." oninput="filterTable('history-table', this.value)">
+            </div>
             <button class="btn-primary" onclick="openAddPriceModal()">＋ Record Price</button>
           </div>
         </div>

@@ -422,6 +422,29 @@ body {
   border-color: var(--green);
 }
 
+.search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 260px;
+}
+
+.search-wrapper svg {
+  position: absolute;
+  left: 11px;
+  width: 14px !important;
+  height: 14px !important;
+  stroke: #9ca3af !important;
+  stroke-width: 2 !important;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-wrapper .search-input {
+  width: 100%;
+  padding-left: 36px !important;
+}
+
 /* ─── BUTTONS ────────────────────────────────── */
 .btn-primary {
   background: var(--green);
