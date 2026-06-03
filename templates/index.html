@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grocery Price Comparison System</title>
   <link rel="stylesheet" href="file:///C:/Users/Ryzen/OneDrive/Desktop/GroceryPriceSystem/static/css/style.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -14,7 +15,8 @@
     <aside class="sidebar">
       <div class="brand">
         <div class="brand-logo">Price<span>Watch</span></div>
-        <div class="brand-city">📍 Iligan City</div>
+        <i data-lucide="map-pin" style="width:12px;height:12px;stroke:#24b064;stroke-width:2"></i>
+        Iligan City
       </div>
 
       <nav class="nav">
@@ -89,24 +91,27 @@
             <div class="page-sub">Tracking groceries across Iligan City</div>
           </div>
           <div class="topbar-right">
-            <div class="date-chip" id="current-date"></div>
+            <div class="date-chip">
+              <i data-lucide="calendar" style="width:14px;height:14px;stroke:#6b7a6f;stroke-width:2;flex-shrink:0"></i>
+              <span id="current-date"></span>
+            </div>
           </div>
         </div>
 
         <!-- STATS -->
         <div class="stats-row">
           <div class="stat-card">
-            <div class="stat-icon">📦</div>
+            <div class="stat-icon"><i data-lucide="package"></i></div>
             <div class="stat-label">Total Products</div>
             <div class="stat-value green" id="stat-products">0</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">🏪</div>
+            <div class="stat-icon"><i data-lucide="store"></i></div>
             <div class="stat-label">Stores Tracked</div>
             <div class="stat-value green" id="stat-stores">0</div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">📊</div>
+            <div class="stat-icon"><i data-lucide="trending-up"></i></div>
             <div class="stat-label">Price Recorded</div>
             <div class="stat-value green" id="stat-prices">0</div>
           </div>

@@ -15,6 +15,7 @@ window.addEventListener('pywebviewready', function () {
   loadCategories();
   loadPriceHistory();
   loadPriceComparison();
+  renderIcons();
 });
 
 // ─── DATE ─────────────────────────────────────
@@ -30,7 +31,7 @@ function setCurrentDate() {
   const now = new Date();
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('current-date').textContent =
-    '📅 ' + now.toLocaleDateString('en-US', options);
+  now.toLocaleDateString('en-US', options);
 }
 
 function setRecordCount(elementId, count, label) {
@@ -797,4 +798,8 @@ function loadPriceComparison() {
     }).join('');
   });
   makeSortable('comparison-table');
+}
+
+function renderIcons() {
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
