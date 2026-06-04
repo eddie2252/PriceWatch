@@ -764,6 +764,153 @@
     </div>
   </div>
 
+
+            <!-- ══ STORE PREVIEW ══ -->
+<div class="overlay" id="modal-store-preview">
+  <div class="modal modal-preview-lg">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <i data-lucide="store" class="modal-header-icon"></i>
+        <div>
+          <div class="modal-title" id="preview-store-title">Store Details</div>
+          <div class="modal-subtitle" id="preview-store-type"></div>
+        </div>
+      </div>
+      <div class="modal-close" onclick="hideModal('modal-store-preview')">✕</div>
+    </div>
+    <div class="modal-body">
+
+      <!-- Store Info Grid -->
+      <div class="preview-info-grid">
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="map-pin"></i> Barangay
+          </div>
+          <div class="preview-info-value" id="preview-store-barangay">—</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="navigation"></i> Street
+          </div>
+          <div class="preview-info-value" id="preview-store-street">—</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="phone"></i> Contact
+          </div>
+          <div class="preview-info-value" id="preview-store-contact">—</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="tag"></i> Price Records
+          </div>
+          <div class="preview-info-value green-text" id="preview-store-count">0</div>
+        </div>
+      </div>
+
+      <!-- Cheapest Product -->
+      <div class="preview-section-title">
+        <i data-lucide="trending-down"></i> Cheapest Product
+      </div>
+      <div class="preview-highlight-box" id="preview-store-cheapest">
+        No records yet
+      </div>
+
+      <!-- Recent Prices -->
+      <div class="preview-section-title">
+        <i data-lucide="clock"></i> Recent Price Records
+      </div>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="preview-store-recent">
+          <tr><td colspan="3" class="empty-msg">No records yet</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideModal('modal-store-preview')">Close</button>
+      <button class="btn-edit" id="preview-store-edit-btn">
+        <i data-lucide="pencil"></i> Edit Store
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRODUCT PREVIEW ══ -->
+<div class="overlay" id="modal-product-preview">
+  <div class="modal modal-preview-lg">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <i data-lucide="package" class="modal-header-icon"></i>
+        <div>
+          <div class="modal-title" id="preview-product-title">Product Details</div>
+          <div class="modal-subtitle" id="preview-product-brand"></div>
+        </div>
+      </div>
+      <div class="modal-close" onclick="hideModal('modal-product-preview')">✕</div>
+    </div>
+    <div class="modal-body">
+
+      <!-- Product Info -->
+      <div class="preview-info-grid">
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="ruler"></i> Unit
+          </div>
+          <div class="preview-info-value" id="preview-product-unit">—</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="tag"></i> Brand
+          </div>
+          <div class="preview-info-value" id="preview-product-brand-val">—</div>
+        </div>
+        <div class="preview-info-item" style="grid-column: span 2">
+          <div class="preview-info-label">
+            <i data-lucide="folder"></i> Categories
+          </div>
+          <div class="preview-info-value" id="preview-product-categories">—</div>
+        </div>
+      </div>
+
+      <!-- Price Comparison across stores -->
+      <div class="preview-section-title">
+        <i data-lucide="bar-chart-2"></i> Price Across Stores
+      </div>
+      <div id="preview-product-no-prices" class="empty-msg" style="display:none;padding:16px">
+        No price records yet for this product.
+      </div>
+      <table class="tbl" id="preview-product-prices-table">
+        <thead>
+          <tr>
+            <th>Store</th>
+            <th>Price</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="preview-product-prices">
+          <tr><td colspan="4" class="empty-msg">No records yet</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideModal('modal-product-preview')">Close</button>
+      <button class="btn-edit" id="preview-product-edit-btn">
+        <i data-lucide="pencil"></i> Edit Product
+      </button>
+    </div>
+  </div>
+</div>
+
   <!-- SUCCESS TOAST -->
   <div class="toast" id="toast"></div>
 

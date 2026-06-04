@@ -206,7 +206,7 @@ function loadStores() {
     }
     setRecordCount('stores-count', allStores.length, 'stores');
     tbody.innerHTML = allStores.map((s, i) => `
-      <tr>
+      <tr class="clickable" onclick="openStorePreview(${s.store_id})">
         <td>${i + 1}</td>
         <td><strong>${s.store_name}</strong></td>
         <td><span class="badge badge-green">${s.store_type}</span></td>
@@ -214,7 +214,7 @@ function loadStores() {
         <td>${s.street || '—'}</td>
         <td>${s.contact_number || '—'}</td>
         <td>
-          <div class="action-row">
+          <div class="action-row" onclick="event.stopPropagation()">
             <div class="act-btn" onclick="openEditStore(${s.store_id})" title="Edit">✏️</div>
             <div class="act-btn del" onclick="openDeleteStore(${s.store_id}, '${s.store_name}')" title="Delete">🗑️</div>
           </div>
@@ -327,6 +327,62 @@ function refreshStoreDropdown() {
   const select = document.getElementById('add-price-store');
   select.innerHTML = '<option value="" disabled selected>Select store...</option>' +
     allStores.map(s => `<option value="${s.store_id}">${s.store_name}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// STORE PREVIEW
+// ══════════════════════════════════════════════
+function openStorePreview(storeId) {
+  window.pywebview.api.get_store_preview(storeId).then(res => {
+    const data = JSON.parse(res);
+    const s = data.store;
+
+    document.getElementById('preview-store-title').textContent   = s.store_name;
+    document.getElementById('preview-store-type').textContent    = s.store_type;
+    document.getElementById('preview-store-barangay').textContent = s.barangay || '—';
+    document.getElementById('preview-store-street').textContent  = s.street || '—';
+    document.getElementById('preview-store-contact').textContent = s.contact_number || '—';
+    document.getElementById('preview-store-count').textContent   = data.price_count;
+
+    // Cheapest product
+    const cheapBox = document.getElementById('preview-store-cheapest');
+    if (data.cheapest) {
+      cheapBox.innerHTML = `
+        <strong>${data.cheapest.product_name}</strong>
+        <span style="float:right;color:var(--green);font-size:15px;font-weight:800">
+          ₱${parseFloat(data.cheapest.price).toFixed(2)}
+        </span>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">
+          Recorded on ${formatDate(data.cheapest.date_recorded)}
+        </div>
+      `;
+    } else {
+      cheapBox.textContent = 'No price records yet';
+    }
+
+    // Recent records
+    const tbody = document.getElementById('preview-store-recent');
+    if (data.recent.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">No records yet</td></tr>';
+    } else {
+      tbody.innerHTML = data.recent.map(r => `
+        <tr>
+          <td><strong>${r.product_name}</strong></td>
+          <td class="price-low">₱${parseFloat(r.price).toFixed(2)}</td>
+          <td>${formatDate(r.date_recorded)}</td>
+        </tr>
+      `).join('');
+    }
+
+    // Edit button
+    document.getElementById('preview-store-edit-btn').onclick = () => {
+      hideModal('modal-store-preview');
+      openEditStore(storeId);
+    };
+
+    showModal('modal-store-preview');
+    renderIcons();
+  });
 }
 
 // ══════════════════════════════════════════════
@@ -464,14 +520,14 @@ function loadProducts() {
     }
     setRecordCount('products-count', allProducts.length, 'products');
     tbody.innerHTML = allProducts.map((p, i) => `
-      <tr>
+      <tr class="clickable" onclick="openProductPreview(${p.product_id})">
         <td>${i + 1}</td>
         <td><strong>${p.product_name}</strong></td>
         <td>${p.product_brand}</td>
         <td><span class="badge badge-blue">${p.product_unit}</span></td>
         <td>${p.categories || '—'}</td>
         <td>
-          <div class="action-row">
+          <div class="action-row" onclick="event.stopPropagation()">
             <div class="act-btn" onclick="openEditProduct(${p.product_id})" title="Edit">✏️</div>
             <div class="act-btn del" onclick="openDeleteProduct(${p.product_id}, '${p.product_name}')" title="Delete">🗑️</div>
           </div>
@@ -594,6 +650,66 @@ function refreshProductDropdown() {
     allProducts.map(p =>
       `<option value="${p.product_id}">${p.product_name}</option>`
     ).join('');
+}
+
+// ══════════════════════════════════════════════
+// PRODUCT PREVIEW
+// ══════════════════════════════════════════════
+function openProductPreview(productId) {
+  window.pywebview.api.get_product_preview(productId).then(res => {
+    const data = JSON.parse(res);
+    const p = data.product;
+
+    document.getElementById('preview-product-title').textContent    = p.product_name;
+    document.getElementById('preview-product-brand').textContent    = p.product_brand;
+    document.getElementById('preview-product-unit').textContent     = p.product_unit;
+    document.getElementById('preview-product-brand-val').textContent = p.product_brand;
+    document.getElementById('preview-product-categories').textContent =
+      data.categories.length > 0 ? data.categories.join(', ') : '—';
+
+    // Prices across stores
+    const tbody = document.getElementById('preview-product-prices');
+    const noPrice = document.getElementById('preview-product-no-prices');
+
+    if (data.prices.length === 0) {
+      tbody.innerHTML = '';
+      noPrice.style.display = 'block';
+      document.getElementById('preview-product-prices-table').style.display = 'none';
+    } else {
+      noPrice.style.display = 'none';
+      document.getElementById('preview-product-prices-table').style.display = 'table';
+
+      const lowestPrice = Math.min(...data.prices.map(x => x.price));
+
+      tbody.innerHTML = data.prices.map((pr, i) => {
+        const isLowest = pr.price === lowestPrice;
+        return `
+          <tr>
+            <td>${pr.store_name}</td>
+            <td class="${isLowest ? 'price-low' : 'price-mid'}">
+              ₱${parseFloat(pr.price).toFixed(2)}
+              ${isLowest ? '<span class="badge badge-green" style="margin-left:6px">Cheapest</span>' : ''}
+            </td>
+            <td>${formatDate(pr.date_recorded)}</td>
+            <td>${i === 0 && data.prices.length > 1 ?
+              `<span style="font-size:10px;color:var(--green);font-weight:700">
+                saves ₱${(Math.max(...data.prices.map(x=>x.price)) - pr.price).toFixed(2)}
+              </span>` : ''}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Edit button
+    document.getElementById('preview-product-edit-btn').onclick = () => {
+      hideModal('modal-product-preview');
+      openEditProduct(productId);
+    };
+
+    showModal('modal-product-preview');
+    renderIcons();
+  });
 }
 
 // ══════════════════════════════════════════════

@@ -268,3 +268,57 @@ def category_exists(category_name):
     ).fetchone()[0]
     conn.close()
     return result > 0
+
+def get_store_preview(store_id):
+    conn = get_connection()
+    store = conn.execute(
+        "SELECT * FROM store WHERE store_id = ?", (store_id,)
+    ).fetchone()
+    price_count = conn.execute(
+        "SELECT COUNT(*) FROM price WHERE store_id = ?", (store_id,)
+    ).fetchone()[0]
+    cheapest = conn.execute("""
+        SELECT pr.product_name, p.price, p.date_recorded
+        FROM price p
+        JOIN product pr ON p.product_id = pr.product_id
+        WHERE p.store_id = ?
+        ORDER BY p.price ASC LIMIT 1
+    """, (store_id,)).fetchone()
+    recent = conn.execute("""
+        SELECT pr.product_name, p.price, p.date_recorded
+        FROM price p
+        JOIN product pr ON p.product_id = pr.product_id
+        WHERE p.store_id = ?
+        ORDER BY p.date_recorded DESC LIMIT 5
+    """, (store_id,)).fetchall()
+    conn.close()
+    return {
+        "store":       dict(store) if store else {},
+        "price_count": price_count,
+        "cheapest":    dict(cheapest) if cheapest else None,
+        "recent":      [dict(r) for r in recent]
+    }
+
+def get_product_preview(product_id):
+    conn = get_connection()
+    product = conn.execute(
+        "SELECT * FROM product WHERE product_id = ?", (product_id,)
+    ).fetchone()
+    categories = conn.execute("""
+        SELECT c.category_name FROM classifies cl
+        JOIN category c ON cl.category_id = c.category_id
+        WHERE cl.product_id = ?
+    """, (product_id,)).fetchall()
+    prices = conn.execute("""
+        SELECT s.store_name, p.price, p.date_recorded
+        FROM price p
+        JOIN store s ON p.store_id = s.store_id
+        WHERE p.product_id = ?
+        ORDER BY p.price ASC
+    """, (product_id,)).fetchall()
+    conn.close()
+    return {
+        "product":    dict(product) if product else {},
+        "categories": [c["category_name"] for c in categories],
+        "prices":     [dict(p) for p in prices]
+    }

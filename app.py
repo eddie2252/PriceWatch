@@ -46,6 +46,12 @@ class API:
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
 
+    def get_store_preview(self, store_id):
+        try:
+            return json.dumps(database.get_store_preview(store_id))
+        except Exception as e:
+            return json.dumps({"error": str(e)})    
+
     # ─── CATEGORIES ───────────────────────────────────────
     def get_all_categories(self):
         return json.dumps(database.get_all_categories())
@@ -105,6 +111,12 @@ class API:
             return json.dumps({"success": True, "message": "Product deleted successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
+
+    def get_product_preview(self, product_id):
+        try:
+            return json.dumps(database.get_product_preview(product_id))
+        except Exception as e:
+            return json.dumps({"error": str(e)})    
 
     # ─── PRICES ───────────────────────────────────────────
     def get_all_prices(self):
