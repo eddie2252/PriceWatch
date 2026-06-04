@@ -167,7 +167,7 @@
               <i data-lucide="search"></i>
               <input class="search-input" type="text" placeholder="Search stores..." oninput="filterTable('stores-table', this.value)">
             </div>
-            <button class="btn-primary" onclick="showModal('modal-store-add')">＋ Add Store</button>
+            <button class="btn-primary" onclick="showModal('modal-store-add')"><i data-lucide="plus"></i>Add Store</button>
           </div>
         </div>
         <div class="panel">
@@ -202,7 +202,7 @@
               <i data-lucide="search"></i>
               <input class="search-input" type="text" placeholder="Search products..." oninput="filterTable('products-table', this.value)">
             </div>
-            <button class="btn-primary" onclick="showModal('modal-product-add')">＋ Add Product</button>
+            <button class="btn-primary" onclick="showModal('modal-product-add')"><i data-lucide="plus"></i> Add Product</button>
           </div>
         </div>
         <div class="panel">
@@ -236,7 +236,7 @@
               <i data-lucide="search"></i>
               <input class="search-input" type="text" placeholder="Search categories..." oninput="filterTable('categories-table', this.value)">
             </div>
-            <button class="btn-primary" onclick="showModal('modal-category-add')">＋ Add Category</button>
+            <button class="btn-primary" onclick="showModal('modal-category-add')"><i data-lucide="plus"></i> Add Category</button>
           </div>
         </div>
         <div class="panel">
@@ -300,7 +300,7 @@
               <i data-lucide="search"></i>
               <input class="search-input" type="text" placeholder="Search records..." oninput="filterTable('history-table', this.value)">
             </div>
-            <button class="btn-primary" onclick="openAddPriceModal()">＋ Record Price</button>
+            <button class="btn-primary" onclick="openAddPriceModal()"><i data-lucide="plus"></i> Record Price</button>
           </div>
         </div>
         <div class="panel">
@@ -338,7 +338,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🏪</span>
+          <i data-lucide="store" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Add Store</div>
             <div class="modal-subtitle">Register a new store in Iligan City</div>
@@ -377,7 +377,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-add')">Cancel</button>
-        <button class="btn-primary" onclick="submitAddStore()">＋ Add Store</button>
+        <button class="btn-primary" onclick="submitAddStore()"><i data-lucide="plus"></i> Add Store</button>
       </div>
     </div>
   </div>
@@ -387,7 +387,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">✏️</span>
+          <i data-lucide="pencil" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Edit Store</div>
             <div class="modal-subtitle">Update store information</div>
@@ -434,7 +434,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-edit')">Cancel</button>
-        <button class="btn-edit" onclick="submitEditStore()">✏️ Save Changes</button>
+        <button class="btn-edit" onclick="submitEditStore()"><i data-lucide="save"></i> Save Changes</button>
       </div>
     </div>
   </div>
@@ -444,7 +444,7 @@
     <div class="modal modal-sm">
       <div class="modal-header danger">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🗑️</span>
+          <i data-lucide="trash-2" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Delete Store</div>
             <div class="modal-subtitle">This action cannot be undone</div>
@@ -469,7 +469,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-store-delete')">Cancel</button>
-        <button class="btn-delete" onclick="submitDeleteStore()">🗑️ Yes, Delete</button>
+        <button class="btn-delete" onclick="submitDeleteStore()"><i data-lucide="trash-2"></i> Yes, Delete</button>
       </div>
     </div>
   </div>
@@ -479,7 +479,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🏷️</span>
+          <i data-lucide="folder-plus" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Add Category</div>
             <div class="modal-subtitle">Create a new product category</div>
@@ -500,7 +500,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-add')">Cancel</button>
-        <button class="btn-primary" onclick="submitAddCategory()">＋ Add Category</button>
+        <button class="btn-primary" onclick="submitAddCategory()"><i data-lucide="plus"></i> Add Category</button>
       </div>
     </div>
   </div>
@@ -510,7 +510,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">✏️</span>
+          <i data-lucide="pencil" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Edit Category</div>
             <div class="modal-subtitle">Update this category information</div>
@@ -540,7 +540,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-edit')">Cancel</button>
-        <button class="btn-edit" onclick="submitEditCategory()">✏️ Save Changes</button>
+        <button class="btn-edit" onclick="submitEditCategory()"><i data-lucide="save"></i> Save Changes</button>
       </div>
     </div>
   </div>
@@ -550,7 +550,7 @@
     <div class="modal modal-sm">
       <div class="modal-header danger">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🗑️</span>
+          <i data-lucide="trash-2" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Delete Category</div>
             <div class="modal-subtitle">This action cannot be undone</div>
@@ -572,7 +572,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-category-delete')">Cancel</button>
-        <button class="btn-delete" onclick="submitDeleteCategory()">🗑️ Yes, Delete</button>
+        <button class="btn-delete" onclick="submitDeleteCategory()"><i data-lucide="trash-2"></i> Yes, Delete</button>
       </div>
     </div>
   </div>
@@ -582,7 +582,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">📦</span>
+          <i data-lucide="package-plus" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Add Product</div>
             <div class="modal-subtitle">Register a new grocery product</div>
@@ -612,7 +612,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-add')">Cancel</button>
-        <button class="btn-primary" onclick="submitAddProduct()">＋ Add Product</button>
+        <button class="btn-primary" onclick="submitAddProduct()"><i data-lucide="plus"></i> Add Product</button>
       </div>
     </div>
   </div>
@@ -622,7 +622,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">✏️</span>
+          <i data-lucide="pencil" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Edit Product</div>
             <div class="modal-subtitle">Update product information</div>
@@ -661,7 +661,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-edit')">Cancel</button>
-        <button class="btn-edit" onclick="submitEditProduct()">✏️ Save Changes</button>
+        <button class="btn-edit" onclick="submitEditProduct()"><i data-lucide="save"></i> Save Changes</button>
       </div>
     </div>
   </div>
@@ -671,7 +671,7 @@
     <div class="modal modal-sm">
       <div class="modal-header danger">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🗑️</span>
+          <i data-lucide="trash-2" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Delete Product</div>
             <div class="modal-subtitle">This action cannot be undone</div>
@@ -693,7 +693,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-product-delete')">Cancel</button>
-        <button class="btn-delete" onclick="submitDeleteProduct()">🗑️ Yes, Delete</button>
+        <button class="btn-delete" onclick="submitDeleteProduct()"><i data-lucide="trash-2"></i> Yes, Delete</button>
       </div>
     </div>
   </div>
@@ -703,7 +703,7 @@
     <div class="modal">
       <div class="modal-header">
         <div class="modal-header-left">
-          <span class="modal-header-icon">💰</span>
+          <i data-lucide="circle-dollar-sign" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Record Price</div>
             <div class="modal-subtitle">Add a new price observation</div>
@@ -733,7 +733,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-price-add')">Cancel</button>
-        <button class="btn-primary" onclick="submitAddPrice()">＋ Record Price</button>
+        <button class="btn-primary" onclick="submitAddPrice()"><i data-lucide="plus"></i> Record Price</button>
       </div>
     </div>
   </div>
@@ -743,7 +743,7 @@
     <div class="modal modal-sm">
       <div class="modal-header danger">
         <div class="modal-header-left">
-          <span class="modal-header-icon">🗑️</span>
+          <i data-lucide="trash-2" class="modal-header-icon"></i>
           <div>
             <div class="modal-title">Delete Price Record</div>
             <div class="modal-subtitle">This action cannot be undone</div>
@@ -759,7 +759,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn-cancel" onclick="hideModal('modal-price-delete')">Cancel</button>
-        <button class="btn-delete" onclick="submitDeletePrice()">🗑️ Yes, Delete</button>
+        <button class="btn-delete" onclick="submitDeletePrice()"><i data-lucide="trash-2"></i> Yes, Delete</button>
       </div>
     </div>
   </div>
