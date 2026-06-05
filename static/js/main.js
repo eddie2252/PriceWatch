@@ -890,11 +890,11 @@ function loadPriceComparison() {
         rowClass   = '';
       } else if (isLowest) {
         priceClass = 'price-low';
-        badge      = '<span class="badge badge-green">✅ Cheapest</span>';
+        badge      = '<span class="badge badge-green"> Cheapest</span>';
         rowClass   = 'row-lowest';
       } else if (isHighest) {
         priceClass = 'price-high';
-        badge      = '<span class="badge badge-red">⚠️ Most Expensive</span>';
+        badge      = '<span class="badge badge-red"> Most Expensive</span>';
         rowClass   = 'row-highest';
       } else {
         priceClass = 'price-mid';
