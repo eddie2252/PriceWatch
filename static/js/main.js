@@ -15,7 +15,6 @@ window.addEventListener('pywebviewready', function () {
   loadCategories();
   loadPriceHistory();
   loadPriceComparison();
-  renderIcons();
 });
 
 // ─── DATE ─────────────────────────────────────
@@ -224,6 +223,7 @@ function loadStores() {
 
     refreshStoreDropdown();
     makeSortable('stores-table');
+    renderIcons()
   });
 }
 
@@ -414,6 +414,7 @@ function loadCategories() {
 
     refreshCategoryCheckboxes();
     makeSortable('categories-table');
+    renderIcons()
   });
 }
 
@@ -537,6 +538,7 @@ function loadProducts() {
 
     refreshProductDropdown();
     makeSortable('products-table');
+    renderIcons()
   });
 }
 
@@ -768,6 +770,7 @@ function renderPriceHistoryPage() {
   `;
 
   makeSortable('history-table');
+  renderIcons()
 }
 
 function changePage(direction) {
