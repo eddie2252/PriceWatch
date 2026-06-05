@@ -215,8 +215,8 @@ function loadStores() {
         <td>${s.contact_number || '—'}</td>
         <td>
           <div class="action-row" onclick="event.stopPropagation()">
-            <div class="act-btn" onclick="openEditStore(${s.store_id})" title="Edit">✏️</div>
-            <div class="act-btn del" onclick="openDeleteStore(${s.store_id}, '${s.store_name}')" title="Delete">🗑️</div>
+            <div class="act-btn" onclick="openEditStore(${s.store_id})" title="Edit"><i data-lucide="pencil"></i></div>
+            <div class="act-btn del" onclick="openDeleteStore(${s.store_id}, '${s.store_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -405,8 +405,8 @@ function loadCategories() {
         <td>${c.category_description || '—'}</td>
         <td>
           <div class="action-row">
-            <div class="act-btn" onclick="openEditCategory(${c.category_id})" title="Edit">✏️</div>
-            <div class="act-btn del" onclick="openDeleteCategory(${c.category_id}, '${c.category_name}')" title="Delete">🗑️</div>
+            <div class="act-btn" onclick="openEditCategory(${c.category_id})" title="Edit"><i data-lucide="pencil"></i></div>
+            <div class="act-btn del" onclick="openDeleteCategory(${c.category_id}, '${c.category_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -528,8 +528,8 @@ function loadProducts() {
         <td>${p.categories || '—'}</td>
         <td>
           <div class="action-row" onclick="event.stopPropagation()">
-            <div class="act-btn" onclick="openEditProduct(${p.product_id})" title="Edit">✏️</div>
-            <div class="act-btn del" onclick="openDeleteProduct(${p.product_id}, '${p.product_name}')" title="Delete">🗑️</div>
+            <div class="act-btn" onclick="openEditProduct(${p.product_id})" title="Edit"><i data-lucide="pencil"></i></div>
+            <div class="act-btn del" onclick="openDeleteProduct(${p.product_id}, '${p.product_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -749,7 +749,7 @@ function renderPriceHistoryPage() {
         <div class="action-row">
           <div class="act-btn del"
             onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')"
-            title="Delete">🗑️</div>
+            title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
       </td>
     </tr>
