@@ -922,3 +922,9 @@ function loadPriceComparison() {
 function renderIcons() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
 }
+
+function confirmLogout() {
+  if (confirm('Are you sure you want to exit?')) {
+    window.pywebview.api.quit_app();
+  }
+}

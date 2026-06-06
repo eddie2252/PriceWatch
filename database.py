@@ -249,6 +249,15 @@ def store_exists(store_name):
     conn.close()
     return result > 0
 
+def store_exists_other(store_name, store_id):
+    conn = get_connection()
+    result = conn.execute(
+        "SELECT COUNT(*) FROM store WHERE LOWER(store_name) = LOWER(?) AND store_id != ?",
+        (store_name, store_id)
+    ).fetchone()[0]
+    conn.close()
+    return result > 0
+
 def product_exists(product_name, product_brand):
     conn = get_connection()
     result = conn.execute(

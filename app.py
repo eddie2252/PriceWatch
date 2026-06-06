@@ -34,10 +34,15 @@ class API:
 
     def update_store(self, store_id, store_name, store_type, street, barangay, contact_number):
         try:
+            if database.store_exists_other(store_name, store_id):
+                return json.dumps({"success": False, "message": f"Store '{store_name}' already exists!"})
+            database.update_store(...)
             database.update_store(store_id, store_name, store_type, street, barangay, contact_number)
             return json.dumps({"success": True, "message": "Store updated successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
+    
+        
 
     def delete_store(self, store_id):
         try:
@@ -138,6 +143,11 @@ class API:
             return json.dumps({"success": True, "message": "Price deleted successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
+        
+    def quit_app(self):
+        import threading
+        threading.Thread(target=webview.windows[0].destroy).start()
+    
 
 
 if __name__ == "__main__":
