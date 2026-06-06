@@ -202,6 +202,15 @@ def add_price(store_id, product_id, date_recorded, price):
     conn.commit()
     conn.close()
 
+def update_price(store_id, product_id, date_recorded, new_price):
+    conn = get_connection()
+    conn.execute("""
+        UPDATE price SET price = ?
+        WHERE store_id = ? AND product_id = ? AND date_recorded = ?
+    """, (new_price, store_id, product_id, date_recorded))
+    conn.commit()
+    conn.close()
+
 def delete_price(store_id, product_id, date_recorded):
     conn = get_connection()
     conn.execute("""
@@ -210,6 +219,8 @@ def delete_price(store_id, product_id, date_recorded):
     """, (store_id, product_id, date_recorded))
     conn.commit()
     conn.close()
+
+
 
 def get_price_comparison():
     conn = get_connection()

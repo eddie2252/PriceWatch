@@ -138,7 +138,14 @@ class API:
             return json.dumps({"success": True, "message": "Price recorded successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
-
+        
+    def update_price(self, store_id, product_id, date_recorded, new_price):
+        try:
+            database.update_price(store_id, product_id, date_recorded, float(new_price))
+            return json.dumps({"success": True, "message": "Price updated successfully!"})
+        except Exception as e:
+            return json.dumps({"success": False, "message": str(e)})
+        
     def delete_price(self, store_id, product_id, date_recorded):
         try:
             database.delete_price(store_id, product_id, date_recorded)

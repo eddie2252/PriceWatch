@@ -833,9 +833,8 @@ function renderPriceHistoryPage() {
       <td>${formatDate(p.date_recorded)}</td>
       <td>
         <div class="action-row">
-          <div class="act-btn del"
-            onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')"
-            title="Delete"><i data-lucide="trash-2"></i></div>
+          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${p.product_name}', '${p.store_name}')" title="Edit"><i data-lucide="pencil"></i></div>
+          <div class="act-btn del" onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')" title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
       </td>
     </tr>
@@ -906,6 +905,41 @@ function openAddPriceModal() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('add-price-date').value = today;
   showModal('modal-price-add');
+}
+
+function openEditPrice(storeId, productId, date, currentPrice, productName, storeName) {
+  document.getElementById('edit-price-store-id').value    = storeId;
+  document.getElementById('edit-price-product-id').value  = productId;
+  document.getElementById('edit-price-date').value        = date;
+  document.getElementById('edit-price-amount').value      = currentPrice;
+  document.getElementById('edit-price-product-name').textContent = productName;
+  document.getElementById('edit-price-store-name').textContent   = storeName;
+  document.getElementById('edit-price-date-display').textContent = formatDate(date);
+  showModal('modal-price-edit');
+}
+
+function submitEditPrice() {
+  const storeId   = parseInt(document.getElementById('edit-price-store-id').value);
+  const productId = parseInt(document.getElementById('edit-price-product-id').value);
+  const date      = document.getElementById('edit-price-date').value;
+  const amount    = document.getElementById('edit-price-amount').value;
+
+  if (!amount || isNaN(amount) || parseFloat(amount) < 0.01) {
+    showToast('Please enter a valid price!', true); return;
+  }
+
+  window.pywebview.api.update_price(storeId, productId, date, parseFloat(amount)).then(res => {
+    const result = JSON.parse(res);
+    if (result.success) {
+      hideModal('modal-price-edit');
+      loadPriceHistory();
+      loadPriceComparison();
+      loadDashboard();
+      showToast('✅ ' + result.message);
+    } else {
+      showToast('❌ ' + result.message, true);
+    }
+  });
 }
 
 function openDeletePrice(storeId, productId, date) {
