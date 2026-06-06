@@ -5,16 +5,26 @@ let allCategories = [];
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let allPriceRecords = [];
+let comparisonSearchQuery = '';
 
 // ─── INIT ─────────────────────────────────────
 window.addEventListener('pywebviewready', function () {
   setCurrentDate();
-  loadDashboard();
-  loadStores();
-  loadProducts();
-  loadCategories();
-  loadPriceHistory();
-  loadPriceComparison();
+
+  const loads = [
+    loadDashboard(),
+    loadStores(),
+    loadProducts(),
+    loadCategories(),
+    loadPriceHistory(),
+    loadPriceComparison(),
+  ];
+
+  Promise.allSettled(loads).then(() => {
+    const loader = document.getElementById('app-loader');
+    loader.classList.add('hidden');
+    setTimeout(() => loader.style.display = 'none', 400);
+  });
 });
 
 // ─── DATE ─────────────────────────────────────
@@ -125,6 +135,13 @@ function filterTable(tableId, query) {
       }
     }
     return;
+    
+    if (tableId === 'comparison-table') {
+    comparisonSearchQuery = q;
+    comparisonPage = 1;
+    renderComparisonPage();
+    return;
+  }
   }
 
   const table = document.getElementById(tableId);
@@ -198,7 +215,7 @@ function confirmLogout() {
 // DASHBOARD
 // ══════════════════════════════════════════════
 function loadDashboard() {
-  window.pywebview.api.get_dashboard_stats().then(res => {
+  return window.pywebview.api.get_dashboard_stats().then(res => {
     const data = JSON.parse(res);
 
     document.getElementById('stat-products').textContent = data.total_products;
@@ -231,10 +248,10 @@ function loadDashboard() {
         </tr>
       `).join('');
     }
-  });
+  }).then(() => {
 
   // Categories on dashboard
-  window.pywebview.api.get_all_categories().then(res => {
+  return window.pywebview.api.get_all_categories().then(res => {
     const cats = JSON.parse(res);
     const tbody = document.getElementById('dashboard-categories-table');
     if (cats.length === 0) {
@@ -248,13 +265,14 @@ function loadDashboard() {
       `).join('');
     }
   });
+  });
 }
 
 // ══════════════════════════════════════════════
 // STORES
 // ══════════════════════════════════════════════
 function loadStores() {
-  window.pywebview.api.get_all_stores().then(res => {
+  return window.pywebview.api.get_all_stores().then(res => {
     allStores = JSON.parse(res);
     const tbody = document.getElementById('stores-tbody');
 
@@ -297,7 +315,7 @@ function submitAddStore() {
     showToast('Please fill all required fields!', true); return;
   }
 
-  window.pywebview.api.add_store(name, type, street, barangay, contact).then(res => {
+  return window.pywebview.api.add_store(name, type, street, barangay, contact).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-store-add');
@@ -345,7 +363,7 @@ function submitEditStore() {
     showToast('Please fill all required fields!', true); return;
   }
 
-  window.pywebview.api.update_store(
+  return window.pywebview.api.update_store(
     parseInt(id), name, type, street, barangay, contact
   ).then(res => {
     const result = JSON.parse(res);
@@ -371,7 +389,7 @@ function openDeleteStore(storeId) {
 
 function submitDeleteStore() {
   const id = parseInt(document.getElementById('delete-store-id').value);
-  window.pywebview.api.delete_store(id).then(res => {
+  return window.pywebview.api.delete_store(id).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-store-delete');
@@ -395,7 +413,7 @@ function refreshStoreDropdown() {
 // STORE PREVIEW
 // ══════════════════════════════════════════════
 function openStorePreview(storeId) {
-  window.pywebview.api.get_store_preview(storeId).then(res => {
+  return window.pywebview.api.get_store_preview(storeId).then(res => {
     const data = JSON.parse(res);
     const s = data.store;
 
@@ -451,7 +469,7 @@ function openStorePreview(storeId) {
 // CATEGORIES
 // ══════════════════════════════════════════════
 function loadCategories() {
-  window.pywebview.api.get_all_categories().then(res => {
+  return window.pywebview.api.get_all_categories().then(res => {
     allCategories = JSON.parse(res);
     const tbody = document.getElementById('categories-tbody');
 
@@ -486,7 +504,7 @@ function submitAddCategory() {
 
   if (!name) { showToast('Category name is required!', true); return; }
 
-  window.pywebview.api.add_category(name, desc).then(res => {
+  return window.pywebview.api.add_category(name, desc).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-category-add');
@@ -523,7 +541,7 @@ function submitEditCategory() {
 
   if (!name) { showToast('Category name is required!', true); return; }
 
-  window.pywebview.api.update_category(parseInt(id), name, desc).then(res => {
+  return window.pywebview.api.update_category(parseInt(id), name, desc).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-category-edit');
@@ -545,7 +563,7 @@ function openDeleteCategory(catId) {
 
 function submitDeleteCategory() {
   const id = parseInt(document.getElementById('delete-cat-id').value);
-  window.pywebview.api.delete_category(id).then(res => {
+  return window.pywebview.api.delete_category(id).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-category-delete');
@@ -574,7 +592,7 @@ function refreshCategoryCheckboxes() {
 // PRODUCTS
 // ══════════════════════════════════════════════
 function loadProducts() {
-  window.pywebview.api.get_all_products().then(res => {
+  return window.pywebview.api.get_all_products().then(res => {
     allProducts = JSON.parse(res);
     const tbody = document.getElementById('products-tbody');
 
@@ -623,7 +641,7 @@ function submitAddProduct() {
     showToast('Please select at least one category!', true); return;
   }
 
-  window.pywebview.api.add_product(name, unit, brand, catIds).then(res => {
+  return window.pywebview.api.add_product(name, unit, brand, catIds).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-product-add');
@@ -680,7 +698,7 @@ function submitEditProduct() {
     showToast('Please select at least one category!', true); return;
   }
 
-  window.pywebview.api.update_product(
+  return window.pywebview.api.update_product(
     parseInt(id), name, unit, brand, catIds
   ).then(res => {
     const result = JSON.parse(res);
@@ -704,7 +722,7 @@ function openDeleteProduct(prodId) {
 
 function submitDeleteProduct() {
   const id = parseInt(document.getElementById('delete-prod-id').value);
-  window.pywebview.api.delete_product(id).then(res => {
+  return window.pywebview.api.delete_product(id).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-product-delete');
@@ -742,7 +760,7 @@ function handleUnitChange(selectId, inputId) {
 // PRODUCT PREVIEW
 // ══════════════════════════════════════════════
 function openProductPreview(productId) {
-  window.pywebview.api.get_product_preview(productId).then(res => {
+  return window.pywebview.api.get_product_preview(productId).then(res => {
     const data = JSON.parse(res);
     const p = data.product;
 
@@ -802,7 +820,7 @@ function openProductPreview(productId) {
 // PRICE HISTORY
 // ══════════════════════════════════════════════
 function loadPriceHistory() {
-  window.pywebview.api.get_all_prices().then(res => {
+  return window.pywebview.api.get_all_prices().then(res => {
     allPriceRecords = JSON.parse(res);
     currentPage = 1;
     renderPriceHistoryPage();
@@ -882,7 +900,7 @@ function submitAddPrice() {
     showToast('Please select a date!', true); return;
   }
 
-  window.pywebview.api.add_price(
+  return window.pywebview.api.add_price(
     parseInt(storeId), parseInt(productId), date, parseFloat(amount)
   ).then(res => {
     const result = JSON.parse(res);
@@ -928,7 +946,7 @@ function submitEditPrice() {
     showToast('Please enter a valid price!', true); return;
   }
 
-  window.pywebview.api.update_price(storeId, productId, date, parseFloat(amount)).then(res => {
+  return window.pywebview.api.update_price(storeId, productId, date, parseFloat(amount)).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-price-edit');
@@ -954,7 +972,7 @@ function submitDeletePrice() {
   const productId = parseInt(document.getElementById('delete-price-product-id').value);
   const date      = document.getElementById('delete-price-date').value;
 
-  window.pywebview.api.delete_price(storeId, productId, date).then(res => {
+  return window.pywebview.api.delete_price(storeId, productId, date).then(res => {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-price-delete');
@@ -1021,11 +1039,22 @@ function renderComparisonPage() {
     return { ...p, rowClass, priceClass, badge };
   });
 
-  // Apply filter
+  // Apply filter + search together
   const filtered = tagged.filter(p => {
-    if (comparisonFilter === 'cheapest')  return p.rowClass === 'row-lowest' || p.rowClass === 'row-only';
-    if (comparisonFilter === 'expensive') return p.rowClass === 'row-highest' || p.rowClass === 'row-only';
-    return true;
+    const matchesFilter =
+      comparisonFilter === 'cheapest'  ? (p.rowClass === 'row-lowest' || p.rowClass === 'row-only') :
+      comparisonFilter === 'expensive' ? (p.rowClass === 'row-highest' || p.rowClass === 'row-only') :
+      true;
+
+    const matchesSearch = comparisonSearchQuery === '' || (
+      p.product_name.toLowerCase().includes(comparisonSearchQuery) ||
+      p.store_name.toLowerCase().includes(comparisonSearchQuery) ||
+      p.product_unit.toLowerCase().includes(comparisonSearchQuery) ||
+      String(p.price).includes(comparisonSearchQuery) ||
+      p.date_recorded.includes(comparisonSearchQuery)
+    );
+
+    return matchesFilter && matchesSearch;
   });
 
   if (filtered.length === 0) {
@@ -1090,9 +1119,10 @@ function changeCompPage(direction) {
 }
 
 function loadPriceComparison() {
-  window.pywebview.api.get_price_comparison().then(res => {
+  return window.pywebview.api.get_price_comparison().then(res => {
     allComparisonRecords = JSON.parse(res);
     comparisonPage = 1;
+    comparisonSearchQuery = '';
     if (allComparisonRecords.length === 0) {
       document.getElementById('comparison-tbody').innerHTML =
         '<tr><td colspan="5" class="empty-msg">No price records to compare yet.</td></tr>';
