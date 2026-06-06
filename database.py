@@ -240,20 +240,20 @@ def get_dashboard_stats():
         "total_prices":   total_prices,
         "recent_prices":  [dict(r) for r in recent_prices]
     }
-def store_exists(store_name):
+def store_exists(store_name, barangay):
     conn = get_connection()
     result = conn.execute(
-        "SELECT COUNT(*) FROM store WHERE LOWER(store_name) = LOWER(?)",
-        (store_name,)
+        "SELECT COUNT(*) FROM store WHERE LOWER(store_name) = LOWER(?) AND LOWER(barangay) = LOWER(?)",
+        (store_name, barangay)
     ).fetchone()[0]
     conn.close()
     return result > 0
 
-def store_exists_other(store_name, store_id):
+def store_exists_other(store_name, barangay, store_id):
     conn = get_connection()
     result = conn.execute(
-        "SELECT COUNT(*) FROM store WHERE LOWER(store_name) = LOWER(?) AND store_id != ?",
-        (store_name, store_id)
+        "SELECT COUNT(*) FROM store WHERE LOWER(store_name) = LOWER(?) AND LOWER(barangay) = LOWER(?) AND store_id != ?",
+        (store_name, barangay, store_id)
     ).fetchone()[0]
     conn.close()
     return result > 0

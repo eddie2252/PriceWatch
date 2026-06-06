@@ -142,8 +142,7 @@ function makeSortable(tableId) {
 // ─── LOGOUT ───────────────────────────────────
 function confirmLogout() {
   if (confirm('Are you sure you want to exit?')) {
-    window.pywebview.api.get_dashboard_stats().then(() => {});
-    window.close();
+    window.pywebview.api.quit_app();
   }
 }
 
