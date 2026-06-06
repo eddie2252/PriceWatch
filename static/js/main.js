@@ -83,16 +83,64 @@ function showToast(message, isError = false) {
 
 // ─── SEARCH / FILTER ──────────────────────────
 function filterTable(tableId, query) {
+  const q = query.toLowerCase();
+
+  if (tableId === 'history-table') {
+    if (q === '') {
+      currentPage = 1;
+      renderPriceHistoryPage();
+    } else {
+      const filtered = allPriceRecords.filter(p =>
+        p.product_name.toLowerCase().includes(q) ||
+        p.store_name.toLowerCase().includes(q) ||
+        p.product_unit.toLowerCase().includes(q) ||
+        String(p.price).includes(q) ||
+        p.date_recorded.includes(q)
+      );
+      const tbody = document.getElementById('history-tbody');
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No matching records.</td></tr>';
+        document.getElementById('pagination-info').textContent = `0 results for "${query}"`;
+        document.getElementById('pagination-controls').innerHTML = '';
+      } else {
+        tbody.innerHTML = filtered.map(p => `
+          <tr>
+            <td><strong>${p.product_name}</strong></td>
+            <td>${p.store_name}</td>
+            <td><span class="badge badge-blue">${p.product_unit}</span></td>
+            <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
+            <td>${formatDate(p.date_recorded)}</td>
+            <td>
+              <div class="action-row">
+                <div class="act-btn del"
+                  onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')"
+                  title="Delete"><i data-lucide="trash-2"></i></div>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+        document.getElementById('pagination-info').textContent = `${filtered.length} result${filtered.length !== 1 ? 's' : ''} for "${query}"`;
+        document.getElementById('pagination-controls').innerHTML = '';
+        renderIcons();
+      }
+    }
+    return;
+  }
+
   const table = document.getElementById(tableId);
   const rows = table.querySelectorAll('tbody tr');
-  const q = query.toLowerCase();
   rows.forEach(row => {
-    row.style.display =
-      row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
-
 }
+
+
+const _sortableInitialized = new Set();
+
 function makeSortable(tableId) {
+  if (_sortableInitialized.has(tableId)) return;
+  _sortableInitialized.add(tableId);
+
   const table = document.getElementById(tableId);
   if (!table) return;
   const headers = table.querySelectorAll('th');
