@@ -226,7 +226,7 @@ def get_price_comparison():
     conn = get_connection()
     prices = conn.execute("""
         SELECT pr.product_name, pr.product_unit,
-               s.store_name, p.price, p.date_recorded
+               s.store_name, s.store_id, p.price, p.date_recorded
         FROM price p
         JOIN product pr ON p.product_id = pr.product_id
         JOIN store   s  ON p.store_id   = s.store_id

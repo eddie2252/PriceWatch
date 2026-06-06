@@ -468,7 +468,7 @@ function loadCategories() {
         <td>
           <div class="action-row">
             <div class="act-btn" onclick="openEditCategory(${c.category_id})" title="Edit"><i data-lucide="pencil"></i></div>
-            <div class="act-btn del" onclick="openDeleteCategory(${c.category_id}, '${c.category_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
+            <div class="act-btn del" onclick="openDeleteCategory(${c.category_id})" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -536,9 +536,10 @@ function submitEditCategory() {
   });
 }
 
-function openDeleteCategory(catId, catName) {
-  document.getElementById('delete-cat-id').value          = catId;
-  document.getElementById('delete-cat-name').textContent  = catName;
+function openDeleteCategory(catId) {
+  const c = allCategories.find(x => x.category_id === catId);
+  document.getElementById('delete-cat-id').value         = catId;
+  document.getElementById('delete-cat-name').textContent = c ? c.category_name : '';
   showModal('modal-category-delete');
 }
 
@@ -720,9 +721,8 @@ function submitDeleteProduct() {
 function refreshProductDropdown() {
   const select = document.getElementById('add-price-product');
   select.innerHTML = '<option value="" disabled selected>Select product...</option>' +
-    allProducts.map(p =>
-      `<option value="${p.product_id}">${p.product_name}</option>`
-    ).join('');
+    allProducts.map(p => `<option value="${p.product_id}">${p.product_name} (${p.product_brand})</option>`)
+    .join('');
 }
 
 
@@ -1046,7 +1046,7 @@ function loadPriceComparison() {
         <tr class="${rowClass}">
           <td><strong>${p.product_name}</strong></td>
           <td><span class="badge badge-blue">${p.product_unit}</span></td>
-          <td>${p.store_name}</td>
+          <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
           <td class="${priceClass}">
             ₱${parseFloat(p.price).toFixed(2)}
             <span style="margin-left:6px">${badge}</span>
@@ -1055,6 +1055,7 @@ function loadPriceComparison() {
         </tr>
       `;
     }).join('');
+    renderIcons();
     setComparisonFilter(comparisonFilter);
   });
   makeSortable('comparison-table');

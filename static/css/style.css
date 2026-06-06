@@ -776,6 +776,16 @@ body {
 }
 
 
+.clickable-cell {
+  cursor: pointer;
+  color: var(--text);
+}
+.clickable-cell:hover {
+  color: var(--green);
+  text-decoration: underline;
+}
+
+
 
 
 /* ─── MODAL BODY ─────────────────────────────── */
@@ -1221,3 +1231,4 @@ body {
   border-color: var(--green);
   color: white;
 }
+
