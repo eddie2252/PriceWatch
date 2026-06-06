@@ -972,94 +972,139 @@ function submitDeletePrice() {
 // PRICE COMPARISON
 // ══════════════════════════════════════════════
 let comparisonFilter = 'all';
+let allComparisonRecords = [];
+let comparisonPage = 1;
+const COMP_PAGE_SIZE = 10;
 
 function setComparisonFilter(filter) {
   comparisonFilter = filter;
+  comparisonPage = 1;
 
   document.querySelectorAll('.comp-filter-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.filter === filter);
   });
 
-  const rows = document.querySelectorAll('#comparison-tbody tr');
-  rows.forEach(row => {
-    if (filter === 'all') {
-      row.style.display = '';
-    } else if (filter === 'cheapest') {
-      row.style.display = row.classList.contains('row-lowest') || row.classList.contains('row-only') ? '' : 'none';
-    } else if (filter === 'expensive') {
-      row.style.display = row.classList.contains('row-highest') || row.classList.contains('row-only') ? '' : 'none';
-    }
-  });
+  renderComparisonPage();
 }
 
+function renderComparisonPage() {
+  const tbody = document.getElementById('comparison-tbody');
+
+  // Build lowestMap and highestMap from full dataset
+  const lowestMap  = {};
+  const highestMap = {};
+  allComparisonRecords.forEach(p => {
+    const name = p.product_name;
+    if (!lowestMap[name]  || p.price < lowestMap[name])  lowestMap[name]  = p.price;
+    if (!highestMap[name] || p.price > highestMap[name]) highestMap[name] = p.price;
+  });
+
+  // Tag each row
+  const tagged = allComparisonRecords.map(p => {
+    const onlyOne   = lowestMap[p.product_name] === highestMap[p.product_name];
+    const isLowest  = p.price === lowestMap[p.product_name];
+    const isHighest = p.price === highestMap[p.product_name];
+    let rowClass, priceClass, badge;
+
+    if (onlyOne) {
+      rowClass = 'row-only'; priceClass = 'price-low';
+      badge = '<span class="badge badge-green">Only Record</span>';
+    } else if (isLowest) {
+      rowClass = 'row-lowest'; priceClass = 'price-low';
+      badge = '<span class="badge badge-green">Cheapest</span>';
+    } else if (isHighest) {
+      rowClass = 'row-highest'; priceClass = 'price-high';
+      badge = '<span class="badge badge-red">Most Expensive</span>';
+    } else {
+      rowClass = ''; priceClass = 'price-mid'; badge = '';
+    }
+    return { ...p, rowClass, priceClass, badge };
+  });
+
+  // Apply filter
+  const filtered = tagged.filter(p => {
+    if (comparisonFilter === 'cheapest')  return p.rowClass === 'row-lowest' || p.rowClass === 'row-only';
+    if (comparisonFilter === 'expensive') return p.rowClass === 'row-highest' || p.rowClass === 'row-only';
+    return true;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">No records match this filter.</td></tr>';
+    document.getElementById('comp-pagination-info').textContent = '';
+    document.getElementById('comp-pagination-controls').innerHTML = '';
+    return;
+  }
+
+  // Paginate
+  const totalPages = Math.max(1, Math.ceil(filtered.length / COMP_PAGE_SIZE));
+  comparisonPage   = Math.min(comparisonPage, totalPages);
+  const start      = (comparisonPage - 1) * COMP_PAGE_SIZE;
+  const end        = start + COMP_PAGE_SIZE;
+  const pageData   = filtered.slice(start, end);
+
+  tbody.innerHTML = pageData.map(p => `
+    <tr class="${p.rowClass}">
+      <td><strong>${p.product_name}</strong></td>
+      <td><span class="badge badge-blue">${p.product_unit}</span></td>
+      <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">
+        ${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i>
+      </td>
+      <td class="${p.priceClass}">
+        ₱${parseFloat(p.price).toFixed(2)}
+        <span style="margin-left:6px">${p.badge}</span>
+      </td>
+      <td>${formatDate(p.date_recorded)}</td>
+    </tr>
+  `).join('');
+
+  document.getElementById('comp-pagination-info').textContent =
+    `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} records`;
+
+  document.getElementById('comp-pagination-controls').innerHTML = `
+    <button class="pag-btn" onclick="changeCompPage(-1)" ${comparisonPage === 1 ? 'disabled' : ''}>‹ Prev</button>
+    <span class="pag-info">Page ${comparisonPage} of ${totalPages}</span>
+    <button class="pag-btn" onclick="changeCompPage(1)" ${comparisonPage === totalPages ? 'disabled' : ''}>Next ›</button>
+  `;
+
+  renderIcons();
+}
+
+function changeCompPage(direction) {
+  const filtered = allComparisonRecords.filter(p => {
+    const lowestMap  = {};
+    const highestMap = {};
+    allComparisonRecords.forEach(x => {
+      if (!lowestMap[x.product_name]  || x.price < lowestMap[x.product_name])  lowestMap[x.product_name]  = x.price;
+      if (!highestMap[x.product_name] || x.price > highestMap[x.product_name]) highestMap[x.product_name] = x.price;
+    });
+    const onlyOne   = lowestMap[p.product_name] === highestMap[p.product_name];
+    const isLowest  = p.price === lowestMap[p.product_name];
+    const isHighest = p.price === highestMap[p.product_name];
+    if (comparisonFilter === 'cheapest')  return isLowest || onlyOne;
+    if (comparisonFilter === 'expensive') return isHighest || onlyOne;
+    return true;
+  });
+  const totalPages = Math.ceil(filtered.length / COMP_PAGE_SIZE);
+  comparisonPage = Math.max(1, Math.min(totalPages, comparisonPage + direction));
+  renderComparisonPage();
+}
 
 function loadPriceComparison() {
   window.pywebview.api.get_price_comparison().then(res => {
-    const prices = JSON.parse(res);
-    const tbody  = document.getElementById('comparison-tbody');
-
-    if (prices.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">No price records to compare yet.</td></tr>';
+    allComparisonRecords = JSON.parse(res);
+    comparisonPage = 1;
+    if (allComparisonRecords.length === 0) {
+      document.getElementById('comparison-tbody').innerHTML =
+        '<tr><td colspan="5" class="empty-msg">No price records to compare yet.</td></tr>';
+      document.getElementById('comp-pagination-info').textContent = '';
+      document.getElementById('comp-pagination-controls').innerHTML = '';
       return;
     }
-
-    // Find lowest AND highest price per product
-    const lowestMap  = {};
-    const highestMap = {};
-
-    prices.forEach(p => {
-      const name = p.product_name;
-      if (!lowestMap[name] || p.price < lowestMap[name])
-        lowestMap[name] = p.price;
-      if (!highestMap[name] || p.price > highestMap[name])
-        highestMap[name] = p.price;
-    });
-
-    tbody.innerHTML = prices.map(p => {
-      const isLowest  = p.price === lowestMap[p.product_name];
-      const isHighest = p.price === highestMap[p.product_name];
-      const onlyOne   = lowestMap[p.product_name] === highestMap[p.product_name];
-
-      let priceClass = '';
-      let badge      = '';
-      let rowClass = '';
-
-      if (onlyOne) {
-        priceClass = 'price-low';
-        badge      = '<span class="badge badge-green">Only Record</span>';
-        rowClass   = 'row-only';
-      } else if (isLowest) {
-        priceClass = 'price-low';
-        badge      = '<span class="badge badge-green"> Cheapest</span>';
-        rowClass   = 'row-lowest';
-      } else if (isHighest) {
-        priceClass = 'price-high';
-        badge      = '<span class="badge badge-red"> Most Expensive</span>';
-        rowClass   = 'row-highest';
-      } else {
-        priceClass = 'price-mid';
-        badge      = '';
-        rowClass   = '';
-      }
-
-      return `
-        <tr class="${rowClass}">
-          <td><strong>${p.product_name}</strong></td>
-          <td><span class="badge badge-blue">${p.product_unit}</span></td>
-          <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
-          <td class="${priceClass}">
-            ₱${parseFloat(p.price).toFixed(2)}
-            <span style="margin-left:6px">${badge}</span>
-          </td>
-          <td>${formatDate(p.date_recorded)}</td>
-        </tr>
-      `;
-    }).join('');
-    renderIcons();
-    setComparisonFilter(comparisonFilter);
+    renderComparisonPage();
   });
   makeSortable('comparison-table');
 }
+
 
 function renderIcons() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
