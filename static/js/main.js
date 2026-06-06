@@ -801,8 +801,9 @@ function renderPriceHistoryPage() {
     p.product_name.toLowerCase().includes(historySearchQuery) ||
     p.store_name.toLowerCase().includes(historySearchQuery) ||
     p.product_unit.toLowerCase().includes(historySearchQuery) ||
-    String(p.price).includes(historySearchQuery) ||
-    p.date_recorded.includes(historySearchQuery)
+    parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
+    p.date_recorded.includes(historySearchQuery) ||
+    formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
   );
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const start      = (currentPage - 1) * PAGE_SIZE;
@@ -861,8 +862,9 @@ function changePage(direction) {
     p.product_name.toLowerCase().includes(historySearchQuery) ||
     p.store_name.toLowerCase().includes(historySearchQuery) ||
     p.product_unit.toLowerCase().includes(historySearchQuery) ||
-    String(p.price).includes(historySearchQuery) ||
-    p.date_recorded.includes(historySearchQuery)
+    parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
+    p.date_recorded.includes(historySearchQuery) ||
+    formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
   );
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   currentPage = Math.max(1, Math.min(totalPages, currentPage + direction));
@@ -1039,8 +1041,9 @@ function renderComparisonPage() {
       p.product_name.toLowerCase().includes(comparisonSearchQuery) ||
       p.store_name.toLowerCase().includes(comparisonSearchQuery) ||
       p.product_unit.toLowerCase().includes(comparisonSearchQuery) ||
-      String(p.price).includes(comparisonSearchQuery) ||
-      p.date_recorded.includes(comparisonSearchQuery)
+      parseFloat(p.price).toFixed(2).includes(comparisonSearchQuery) ||
+      p.date_recorded.includes(comparisonSearchQuery) ||
+      formatDate(p.date_recorded).toLowerCase().includes(comparisonSearchQuery)
     );
 
     return matchesFilter && matchesSearch;
