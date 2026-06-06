@@ -1075,8 +1075,9 @@ function renderComparisonPage() {
     </tr>
   `).join('');
 
-  document.getElementById('comp-pagination-info').textContent =
-    `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} records`;
+  document.getElementById('comp-pagination-info').textContent = comparisonSearchQuery
+    ? `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} results for "${comparisonSearchQuery}"`
+    : `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} records`;
 
   document.getElementById('comp-pagination-controls').innerHTML = `
     <button class="pag-btn" onclick="changeCompPage(-1)" ${comparisonPage === 1 ? 'disabled' : ''}>‹ Prev</button>
@@ -1120,10 +1121,9 @@ function loadPriceComparison() {
       return;
     }
     renderComparisonPage();
+    makeSortable('comparison-table');
   });
-  makeSortable('comparison-table');
 }
-
 
 function renderIcons() {
   if (typeof lucide !== 'undefined') lucide.createIcons();
