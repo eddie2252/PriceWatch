@@ -5,7 +5,8 @@ let allCategories = [];
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let allPriceRecords = [];
-let comparisonSearchQuery = '';
+let historySearchQuery = '';
+
 
 // ─── INIT ─────────────────────────────────────
 window.addEventListener('pywebviewready', function () {
@@ -96,52 +97,17 @@ function filterTable(tableId, query) {
   const q = query.toLowerCase();
 
   if (tableId === 'history-table') {
-    if (q === '') {
-      currentPage = 1;
-      renderPriceHistoryPage();
-    } else {
-      const filtered = allPriceRecords.filter(p =>
-        p.product_name.toLowerCase().includes(q) ||
-        p.store_name.toLowerCase().includes(q) ||
-        p.product_unit.toLowerCase().includes(q) ||
-        String(p.price).includes(q) ||
-        p.date_recorded.includes(q)
-      );
-      const tbody = document.getElementById('history-tbody');
-      if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No matching records.</td></tr>';
-        document.getElementById('pagination-info').textContent = `0 results for "${query}"`;
-        document.getElementById('pagination-controls').innerHTML = '';
-      } else {
-        tbody.innerHTML = filtered.map(p => `
-          <tr>
-            <td><strong>${p.product_name}</strong></td>
-            <td>${p.store_name}</td>
-            <td><span class="badge badge-blue">${p.product_unit}</span></td>
-            <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
-            <td>${formatDate(p.date_recorded)}</td>
-            <td>
-              <div class="action-row">
-                <div class="act-btn del"
-                  onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')"
-                  title="Delete"><i data-lucide="trash-2"></i></div>
-              </div>
-            </td>
-          </tr>
-        `).join('');
-        document.getElementById('pagination-info').textContent = `${filtered.length} result${filtered.length !== 1 ? 's' : ''} for "${query}"`;
-        document.getElementById('pagination-controls').innerHTML = '';
-        renderIcons();
-      }
-    }
+    historySearchQuery = q;
+    currentPage = 1;
+    renderPriceHistoryPage();
     return;
-    
-    if (tableId === 'comparison-table') {
+  }
+
+  if (tableId === 'comparison-table') {
     comparisonSearchQuery = q;
     comparisonPage = 1;
     renderComparisonPage();
     return;
-  }
   }
 
   const table = document.getElementById(tableId);
@@ -823,6 +789,7 @@ function loadPriceHistory() {
   return window.pywebview.api.get_all_prices().then(res => {
     allPriceRecords = JSON.parse(res);
     currentPage = 1;
+    historySearchQuery = '';
     renderPriceHistoryPage();
     setRecordCount('history-count', allPriceRecords.length, 'records');
   });
@@ -830,10 +797,24 @@ function loadPriceHistory() {
 
 function renderPriceHistoryPage() {
   const tbody      = document.getElementById('history-tbody');
-  const totalPages = Math.max(1, Math.ceil(allPriceRecords.length / PAGE_SIZE));
+  const filtered   = historySearchQuery === '' ? allPriceRecords : allPriceRecords.filter(p =>
+    p.product_name.toLowerCase().includes(historySearchQuery) ||
+    p.store_name.toLowerCase().includes(historySearchQuery) ||
+    p.product_unit.toLowerCase().includes(historySearchQuery) ||
+    String(p.price).includes(historySearchQuery) ||
+    p.date_recorded.includes(historySearchQuery)
+  );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const start      = (currentPage - 1) * PAGE_SIZE;
   const end        = start + PAGE_SIZE;
-  const pageData   = allPriceRecords.slice(start, end);
+  const pageData   = filtered.slice(start, end);
+
+  if (filtered.length === 0 && historySearchQuery !== '') {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No records matching "${historySearchQuery}".</td></tr>`;
+    document.getElementById('pagination-info').textContent = '';
+    document.getElementById('pagination-controls').innerHTML = '';
+    return;
+  }
 
   if (allPriceRecords.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No price records yet.</td></tr>';
@@ -859,8 +840,9 @@ function renderPriceHistoryPage() {
   `).join('');
 
   // Pagination info
-  document.getElementById('pagination-info').textContent =
-    `Showing ${start + 1}–${Math.min(end, allPriceRecords.length)} of ${allPriceRecords.length} records`;
+  document.getElementById('pagination-info').textContent = historySearchQuery
+    ? `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} results for "${historySearchQuery}"`
+    : `Showing ${start + 1}–${Math.min(end, allPriceRecords.length)} of ${allPriceRecords.length} records`;
 
   // Pagination buttons
   const controls = document.getElementById('pagination-controls');
@@ -875,7 +857,14 @@ function renderPriceHistoryPage() {
 }
 
 function changePage(direction) {
-  const totalPages = Math.ceil(allPriceRecords.length / PAGE_SIZE);
+  const filtered = historySearchQuery === '' ? allPriceRecords : allPriceRecords.filter(p =>
+    p.product_name.toLowerCase().includes(historySearchQuery) ||
+    p.store_name.toLowerCase().includes(historySearchQuery) ||
+    p.product_unit.toLowerCase().includes(historySearchQuery) ||
+    String(p.price).includes(historySearchQuery) ||
+    p.date_recorded.includes(historySearchQuery)
+  );
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   currentPage = Math.max(1, Math.min(totalPages, currentPage + direction));
   renderPriceHistoryPage();
 }
