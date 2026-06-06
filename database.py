@@ -53,6 +53,9 @@ def initialize_database():
             FOREIGN KEY (store_id)   REFERENCES store(store_id)     ON DELETE CASCADE,
             FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
         );
+
+        CREATE INDEX IF NOT EXISTS idx_price_product ON price(product_id);
+        CREATE INDEX IF NOT EXISTS idx_price_store ON price(store_id);                                  
     """)
 
     conn.commit()

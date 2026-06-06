@@ -215,7 +215,7 @@ function loadDashboard() {
           <td>${r.product_name}</td>
           <td>${r.store_name}</td>
           <td class="price-col price-low">₱${parseFloat(r.price).toFixed(2)}</td>
-          <td>${r.date_recorded}</td>
+          <td>${formatDate(r.date_recorded)}</td>
         </tr>
       `).join('');
     }
@@ -262,7 +262,7 @@ function loadStores() {
         <td>
           <div class="action-row" onclick="event.stopPropagation()">
             <div class="act-btn" onclick="openEditStore(${s.store_id})" title="Edit"><i data-lucide="pencil"></i></div>
-            <div class="act-btn del" onclick="openDeleteStore(${s.store_id}, '${s.store_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
+            <div class="act-btn del" onclick="openDeleteStore(${s.store_id})" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -348,11 +348,14 @@ function submitEditStore() {
   });
 }
 
-function openDeleteStore(storeId, storeName) {
-  document.getElementById('delete-store-id').value   = storeId;
-  document.getElementById('delete-store-name').textContent = storeName;
+function openDeleteStore(storeId) {
+  const s = allStores.find(x => x.store_id === storeId);
+  document.getElementById('delete-store-id').value = storeId;
+  document.getElementById('delete-store-name').textContent = s ? s.store_name : '';
   showModal('modal-store-delete');
 }
+
+
 
 function submitDeleteStore() {
   const id = parseInt(document.getElementById('delete-store-id').value);
@@ -373,7 +376,7 @@ function submitDeleteStore() {
 function refreshStoreDropdown() {
   const select = document.getElementById('add-price-store');
   select.innerHTML = '<option value="" disabled selected>Select store...</option>' +
-    allStores.map(s => `<option value="${s.store_id}">${s.store_name}</option>`).join('');
+    allStores.map(s => `<option value="${s.store_id}">${s.store_name} — ${s.barangay}</option>`).join('');
 }
 
 // ══════════════════════════════════════════════
@@ -577,7 +580,7 @@ function loadProducts() {
         <td>
           <div class="action-row" onclick="event.stopPropagation()">
             <div class="act-btn" onclick="openEditProduct(${p.product_id})" title="Edit"><i data-lucide="pencil"></i></div>
-            <div class="act-btn del" onclick="openDeleteProduct(${p.product_id}, '${p.product_name}')" title="Delete"><i data-lucide="trash-2"></i></div>
+            <div class="act-btn del" onclick="openDeleteProduct(${p.product_id})" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
@@ -671,9 +674,10 @@ function submitEditProduct() {
   });
 }
 
-function openDeleteProduct(prodId, prodName) {
-  document.getElementById('delete-prod-id').value          = prodId;
-  document.getElementById('delete-prod-name').textContent  = prodName;
+function openDeleteProduct(prodId) {
+  const p = allProducts.find(x => x.product_id === prodId);
+  document.getElementById('delete-prod-id').value = prodId;
+  document.getElementById('delete-prod-name').textContent = p ? p.product_name : '';
   showModal('modal-product-delete');
 }
 
@@ -839,7 +843,7 @@ function submitAddPrice() {
   if (!productId) {
     showToast('Please select a product!', true); return;
   }
-  if (!amount || isNaN(amount) || parseFloat(amount) <= 0) {
+  if (!amount || isNaN(amount) || parseFloat(amount) < 0.01) {
     showToast('Please enter a valid price!', true); return;
   }
   if (!date) {
