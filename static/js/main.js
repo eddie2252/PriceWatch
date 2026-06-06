@@ -208,7 +208,19 @@ function loadDashboard() {
     // Recent prices table
     const tbody = document.getElementById('dashboard-recent-table');
     if (data.recent_prices.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">No price records yet.</td></tr>';
+      const noStores = data.total_stores === 0;
+      const noProducts = data.total_products === 0;
+      let hint = 'No price records yet.';
+      if (noStores && noProducts) {
+        hint = 'Get started: add a Store and a Product first, then record a price.';
+      } else if (noStores) {
+        hint = 'Almost there: add a Store first before recording prices.';
+      } else if (noProducts) {
+        hint = 'Almost there: add a Product first before recording prices.';
+      } else {
+        hint = 'Ready to go: click Price Record in the sidebar to record your first price.';
+      }
+      tbody.innerHTML = `<tr><td colspan="4" class="empty-msg">${hint}</td></tr>`;
     } else {
       tbody.innerHTML = data.recent_prices.map(r => `
         <tr>
@@ -595,7 +607,11 @@ function loadProducts() {
 function submitAddProduct() {
   const name  = document.getElementById('add-prod-name').value.trim();
   const brand = document.getElementById('add-prod-brand').value.trim();
-  const unit  = document.getElementById('add-prod-unit').value.trim();
+  const unitSelect = document.getElementById('add-prod-unit').value;
+  const unit = unitSelect === 'other'
+    ? document.getElementById('add-prod-unit-other').value.trim()
+    : unitSelect;
+  if (!unit) { showToast('Please specify a unit!', true); return; }
   const checks = document.querySelectorAll('#add-prod-categories input[type="checkbox"]:checked');
   const catIds = Array.from(checks).map(c => parseInt(c.value));
 
@@ -648,11 +664,15 @@ function submitEditProduct() {
   const id    = document.getElementById('edit-prod-id').value;
   const name  = document.getElementById('edit-prod-name').value.trim();
   const brand = document.getElementById('edit-prod-brand').value.trim();
-  const unit  = document.getElementById('edit-prod-unit').value.trim();
+  const unitSelect = document.getElementById('edit-prod-unit').value;
+  const unit = unitSelect === 'other'
+    ? document.getElementById('edit-prod-unit-other').value.trim()
+    : unitSelect;
+  if (!unit) { showToast('Please specify a unit!', true); return; }
   const checks = document.querySelectorAll('#edit-prod-categories input[type="checkbox"]:checked');
   const catIds = Array.from(checks).map(c => parseInt(c.value));
 
-  if (!name || !brand || !unit) {
+  if (!name || !brand) {
     showToast('Please fill all required fields!', true); return;
   }
   if (catIds.length === 0) {
@@ -703,6 +723,19 @@ function refreshProductDropdown() {
     allProducts.map(p =>
       `<option value="${p.product_id}">${p.product_name}</option>`
     ).join('');
+}
+
+
+function handleUnitChange(selectId, inputId) {
+  const select = document.getElementById(selectId);
+  const input  = document.getElementById(inputId);
+  if (select.value === 'other') {
+    input.style.display = 'block';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+    input.value = '';
+  }
 }
 
 // ══════════════════════════════════════════════

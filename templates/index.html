@@ -607,7 +607,20 @@
           </div>
           <div class="field">
             <label>Unit <span class="req">*</span></label>
-            <input type="text" id="add-prod-unit" placeholder="e.g. per piece">
+            <select id="add-prod-unit" onchange="handleUnitChange('add-prod-unit', 'add-prod-unit-other')">
+  <option value="" disabled selected>Select unit...</option>
+  <option value="per piece">per piece</option>
+  <option value="per kg">per kg</option>
+  <option value="per pack">per pack</option>
+  <option value="per liter">per liter</option>
+  <option value="per dozen">per dozen</option>
+  <option value="per box">per box</option>
+  <option value="per sachet">per sachet</option>
+  <option value="per bottle">per bottle</option>
+  <option value="per can">per can</option>
+  <option value="other">Other (specify)</option>
+</select>
+<input id="add-prod-unit-other" type="text" placeholder="Specify unit..." style="display:none; margin-top:6px;">
           </div>
         </div>
         <div class="field">
@@ -656,7 +669,20 @@
           </div>
           <div class="field">
             <label>Unit <span class="req">*</span></label>
-            <input type="text" id="edit-prod-unit">
+            <select id="edit-prod-unit" onchange="handleUnitChange('edit-prod-unit', 'edit-prod-unit-other')">
+  <option value="" disabled selected>Select unit...</option>
+  <option value="per piece">per piece</option>
+  <option value="per kg">per kg</option>
+  <option value="per pack">per pack</option>
+  <option value="per liter">per liter</option>
+  <option value="per dozen">per dozen</option>
+  <option value="per box">per box</option>
+  <option value="per sachet">per sachet</option>
+  <option value="per bottle">per bottle</option>
+  <option value="per can">per can</option>
+  <option value="other">Other (specify)</option>
+</select>
+<input id="edit-prod-unit-other" type="text" placeholder="Specify unit..." style="display:none; margin-top:6px;">
           </div>
         </div>
         <div class="field">
