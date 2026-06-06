@@ -1191,3 +1191,32 @@ body {
   stroke-width: 1.8 !important;
   flex-shrink: 0;
 }
+
+.comp-filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.comp-filter-btn {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.comp-filter-btn:hover {
+  border-color: var(--green);
+  color: var(--green);
+}
+
+.comp-filter-btn.active {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}

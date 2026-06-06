@@ -900,6 +900,28 @@ function submitDeletePrice() {
 // ══════════════════════════════════════════════
 // PRICE COMPARISON
 // ══════════════════════════════════════════════
+let comparisonFilter = 'all';
+
+function setComparisonFilter(filter) {
+  comparisonFilter = filter;
+
+  document.querySelectorAll('.comp-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === filter);
+  });
+
+  const rows = document.querySelectorAll('#comparison-tbody tr');
+  rows.forEach(row => {
+    if (filter === 'all') {
+      row.style.display = '';
+    } else if (filter === 'cheapest') {
+      row.style.display = row.classList.contains('row-lowest') || row.classList.contains('row-only') ? '' : 'none';
+    } else if (filter === 'expensive') {
+      row.style.display = row.classList.contains('row-highest') || row.classList.contains('row-only') ? '' : 'none';
+    }
+  });
+}
+
+
 function loadPriceComparison() {
   window.pywebview.api.get_price_comparison().then(res => {
     const prices = JSON.parse(res);
@@ -929,12 +951,12 @@ function loadPriceComparison() {
 
       let priceClass = '';
       let badge      = '';
-      let rowClass   = '';
+      let rowClass = '';
 
       if (onlyOne) {
         priceClass = 'price-low';
         badge      = '<span class="badge badge-green">Only Record</span>';
-        rowClass   = '';
+        rowClass   = 'row-only';
       } else if (isLowest) {
         priceClass = 'price-low';
         badge      = '<span class="badge badge-green"> Cheapest</span>';
@@ -962,6 +984,7 @@ function loadPriceComparison() {
         </tr>
       `;
     }).join('');
+    setComparisonFilter(comparisonFilter);
   });
   makeSortable('comparison-table');
 }
