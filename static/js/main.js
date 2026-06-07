@@ -338,6 +338,8 @@ function submitEditStore() {
       hideModal('modal-store-edit');
       loadStores();
       loadDashboard();
+      loadPriceHistory();
+      loadPriceComparison();
       showToast('✅ ' + result.message);
     } else {
       showToast('❌ ' + result.message, true);
@@ -363,6 +365,7 @@ function submitDeleteStore() {
       loadStores();
       loadDashboard();
       loadPriceHistory();
+      loadPriceComparison();
       showToast('🗑️ ' + result.message);
     } else {
       showToast('❌ ' + result.message, true);
@@ -673,6 +676,8 @@ function submitEditProduct() {
       hideModal('modal-product-edit');
       loadProducts();
       loadDashboard();
+      loadPriceHistory();
+      loadPriceComparison();
       showToast('✅ ' + result.message);
     } else {
       showToast('❌ ' + result.message, true);
@@ -696,6 +701,7 @@ function submitDeleteProduct() {
       loadProducts();
       loadDashboard();
       loadPriceHistory();
+      loadPriceComparison();
       showToast('🗑️ ' + result.message);
     } else {
       showToast('❌ ' + result.message, true);
@@ -828,13 +834,13 @@ function renderPriceHistoryPage() {
   tbody.innerHTML = pageData.map(p => `
     <tr>
       <td><strong>${p.product_name}</strong></td>
-      <td>${p.store_name}</td>
+      <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
       <td><span class="badge badge-blue">${p.product_unit}</span></td>
       <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
       <td>${formatDate(p.date_recorded)}</td>
       <td>
         <div class="action-row">
-          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${p.product_name}', '${p.store_name}')" title="Edit"><i data-lucide="pencil"></i></div>
+          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, ${p.product_id})" title="Edit"><i data-lucide="pencil"></i></div>
           <div class="act-btn del" onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')" title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
       </td>
@@ -918,12 +924,14 @@ function openAddPriceModal() {
 }
 
 function openEditPrice(storeId, productId, date, currentPrice, productName, storeName) {
+  const p = allProducts.find(x => x.product_id === productId);
+  const s = allStores.find(x => x.store_id === storeId);
   document.getElementById('edit-price-store-id').value    = storeId;
   document.getElementById('edit-price-product-id').value  = productId;
   document.getElementById('edit-price-date').value        = date;
   document.getElementById('edit-price-amount').value      = currentPrice;
-  document.getElementById('edit-price-product-name').textContent = productName;
-  document.getElementById('edit-price-store-name').textContent   = storeName;
+  document.getElementById('edit-price-product-name').textContent = p ? p.product_name : '';
+  document.getElementById('edit-price-store-name').textContent   = s ? s.store_name : '';
   document.getElementById('edit-price-date-display').textContent = formatDate(date);
   showModal('modal-price-edit');
 }
