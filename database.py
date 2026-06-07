@@ -49,6 +49,7 @@ def initialize_database():
             product_id    INTEGER NOT NULL,
             date_recorded TEXT NOT NULL,
             price         REAL NOT NULL,
+            created_at    TEXT DEFAULT (datetime('now', 'localtime')),
             PRIMARY KEY (store_id, product_id, date_recorded),
             FOREIGN KEY (store_id)   REFERENCES store(store_id)     ON DELETE CASCADE,
             FOREIGN KEY (product_id) REFERENCES product(product_id) ON DELETE CASCADE
@@ -188,7 +189,7 @@ def get_all_prices():
         FROM price p
         JOIN product pr ON p.product_id = pr.product_id
         JOIN store   s  ON p.store_id   = s.store_id
-        ORDER BY p.date_recorded DESC
+        ORDER BY p.date_recorded DESC, p.created_at DESC
     """).fetchall()
     conn.close()
     return [dict(p) for p in prices]
@@ -252,7 +253,7 @@ def get_dashboard_stats():
         FROM price p
         JOIN product pr ON p.product_id = pr.product_id
         JOIN store   s  ON p.store_id   = s.store_id
-        ORDER BY p.date_recorded DESC LIMIT 10
+        ORDER BY p.date_recorded DESC, p.created_at DESC LIMIT 10
     """).fetchall()
     conn.close()
     return {
