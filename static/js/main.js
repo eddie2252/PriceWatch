@@ -5,6 +5,7 @@ let allCategories = [];
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let allPriceRecords = [];
+let comparisonSearchQuery = '';
 let historySearchQuery = '';
 
 
