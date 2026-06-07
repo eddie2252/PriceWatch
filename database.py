@@ -230,6 +230,13 @@ def get_price_comparison():
         FROM price p
         JOIN product pr ON p.product_id = pr.product_id
         JOIN store   s  ON p.store_id   = s.store_id
+        INNER JOIN (
+            SELECT store_id, product_id, MAX(date_recorded) as latest
+            FROM price
+            GROUP BY store_id, product_id
+        ) latest ON p.store_id = latest.store_id
+                AND p.product_id = latest.product_id
+                AND p.date_recorded = latest.latest
         ORDER BY pr.product_name, p.price ASC
     """).fetchall()
     conn.close()
