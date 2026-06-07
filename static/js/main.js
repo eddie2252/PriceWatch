@@ -449,7 +449,7 @@ function loadCategories() {
     }
     setRecordCount('categories-count', allCategories.length, 'categories');
     tbody.innerHTML = allCategories.map((c, i) => `
-      <tr>
+      <tr class="clickable" onclick="openCategoryPreview(${c.category_id})">
         <td>${i + 1}</td>
         <td><strong>${c.category_name}</strong></td>
         <td>${c.category_description || '—'}</td>
@@ -546,6 +546,47 @@ function submitDeleteCategory() {
   });
 }
 
+
+function openCategoryPreview(categoryId) {
+  return window.pywebview.api.get_category_preview(categoryId).then(res => {
+    const data = JSON.parse(res);
+    const c = data.category;
+
+    document.getElementById('preview-cat-title').textContent       = c.category_name;
+    document.getElementById('preview-cat-subtitle').textContent    = `${data.products.length} product${data.products.length !== 1 ? 's' : ''}`;
+    document.getElementById('preview-cat-description').textContent = c.category_description || '—';
+    document.getElementById('preview-cat-count').textContent       = data.products.length;
+
+    const tbody    = document.getElementById('preview-cat-products');
+    const noProds  = document.getElementById('preview-cat-no-products');
+    const table    = document.getElementById('preview-cat-products-table');
+
+    if (data.products.length === 0) {
+      tbody.innerHTML = '';
+      noProds.style.display = 'block';
+      table.style.display   = 'none';
+    } else {
+      noProds.style.display = 'none';
+      table.style.display   = 'table';
+      tbody.innerHTML = data.products.map(p => `
+        <tr class="clickable" onclick="openProductPreview(${p.product_id}); hideModal('modal-category-preview');">
+          <td><strong>${p.product_name}</strong></td>
+          <td>${p.product_brand}</td>
+          <td><span class="badge badge-blue">${p.product_unit}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    document.getElementById('preview-cat-edit-btn').onclick = () => {
+      hideModal('modal-category-preview');
+      openEditCategory(categoryId);
+    };
+
+    showModal('modal-category-preview');
+    renderIcons();
+  });
+}
+
 function refreshCategoryCheckboxes() {
   ['add-prod-categories', 'edit-prod-categories'].forEach(id => {
     const container = document.getElementById(id);
@@ -574,7 +615,7 @@ function loadProducts() {
     tbody.innerHTML = allProducts.map((p, i) => `
       <tr class="clickable" onclick="openProductPreview(${p.product_id})">
         <td>${i + 1}</td>
-        <td><strong>${p.product_name}</strong></td>
+        <td class="clickable-cell" onclick="openProductPreview(${p.product_id})" title="View product details"><strong>${p.product_name}</strong> <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
         <td>${p.product_brand}</td>
         <td><span class="badge badge-blue">${p.product_unit}</span></td>
         <td>${p.categories || '—'}</td>
@@ -833,7 +874,7 @@ function renderPriceHistoryPage() {
 
   tbody.innerHTML = pageData.map(p => `
     <tr>
-      <td><strong>${p.product_name}</strong></td>
+      <td class="clickable-cell" onclick="openProductPreview(${p.product_id})" title="View product details"><strong>${p.product_name}</strong> <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
       <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
       <td><span class="badge badge-blue">${p.product_unit}</span></td>
       <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
@@ -1074,7 +1115,7 @@ function renderComparisonPage() {
 
   tbody.innerHTML = pageData.map(p => `
     <tr class="${p.rowClass}">
-      <td><strong>${p.product_name}</strong></td>
+      <td class="clickable-cell" onclick="openProductPreview(${p.product_id})" title="View product details"><strong>${p.product_name}</strong> <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i></td>
       <td><span class="badge badge-blue">${p.product_unit}</span></td>
       <td class="clickable-cell" onclick="openStorePreview(${p.store_id})" title="View store details">
         ${p.store_name} <i data-lucide="external-link" style="width:12px;height:12px;vertical-align:middle;opacity:0.5;"></i>

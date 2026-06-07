@@ -88,6 +88,12 @@ class API:
             return json.dumps({"success": True, "message": "Category deleted successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})
+        
+    def get_category_preview(self, category_id):
+        try:
+            return json.dumps(database.get_category_preview(category_id))
+        except Exception as e:
+            return json.dumps({"error": str(e)})
 
     # ─── PRODUCTS ─────────────────────────────────────────
     def get_all_products(self):

@@ -226,7 +226,7 @@ def delete_price(store_id, product_id, date_recorded):
 def get_price_comparison():
     conn = get_connection()
     prices = conn.execute("""
-        SELECT pr.product_name, pr.product_unit,
+        SELECT pr.product_name, pr.product_unit, pr.product_id,
                s.store_name, s.store_id, p.price, p.date_recorded
         FROM price p
         JOIN product pr ON p.product_id = pr.product_id
@@ -352,4 +352,22 @@ def get_product_preview(product_id):
         "product":    dict(product) if product else {},
         "categories": [c["category_name"] for c in categories],
         "prices":     [dict(p) for p in prices]
+    }
+
+def get_category_preview(category_id):
+    conn = get_connection()
+    category = conn.execute(
+        "SELECT * FROM category WHERE category_id = ?", (category_id,)
+    ).fetchone()
+    products = conn.execute("""
+        SELECT p.product_id, p.product_name, p.product_brand, p.product_unit
+        FROM product p
+        JOIN classifies cl ON p.product_id = cl.product_id
+        WHERE cl.category_id = ?
+        ORDER BY p.product_name ASC
+    """, (category_id,)).fetchall()
+    conn.close()
+    return {
+        "category": dict(category) if category else {},
+        "products": [dict(p) for p in products]
     }

@@ -679,6 +679,65 @@
     </div>
   </div>
 
+      <!-- CATEGORY Preview -->
+  <div class="overlay" id="modal-category-preview">
+  <div class="modal modal-preview-lg">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <i data-lucide="folder" class="modal-header-icon"></i>
+        <div>
+          <div class="modal-title" id="preview-cat-title">Category Details</div>
+          <div class="modal-subtitle" id="preview-cat-subtitle"></div>
+        </div>
+      </div>
+      <div class="modal-close" onclick="hideModal('modal-category-preview')">✕</div>
+    </div>
+    <div class="modal-body">
+
+      <div class="preview-info-grid">
+        <div class="preview-info-item" style="grid-column: span 2">
+          <div class="preview-info-label">
+            <i data-lucide="info"></i> Description
+          </div>
+          <div class="preview-info-value" id="preview-cat-description">—</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="preview-info-label">
+            <i data-lucide="package"></i> Total Products
+          </div>
+          <div class="preview-info-value" id="preview-cat-count">0</div>
+        </div>
+      </div>
+
+      <div class="preview-section-title">
+        <i data-lucide="package"></i> Products in this Category
+      </div>
+      <div id="preview-cat-no-products" class="empty-msg" style="display:none;padding:16px">
+        No products in this category yet.
+      </div>
+      <table class="tbl" id="preview-cat-products-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Brand</th>
+            <th>Unit</th>
+          </tr>
+        </thead>
+        <tbody id="preview-cat-products">
+          <tr><td colspan="3" class="empty-msg">No products yet</td></tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideModal('modal-category-preview')">Close</button>
+      <button class="btn-edit" id="preview-cat-edit-btn">
+        <i data-lucide="pencil"></i> Edit Category
+      </button>
+    </div>
+  </div>
+</div>
+
   <!-- PRODUCT ADD -->
   <div class="overlay" id="modal-product-add">
     <div class="modal">
