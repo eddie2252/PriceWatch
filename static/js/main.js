@@ -455,8 +455,8 @@ function loadCategories() {
         <td>${c.category_description || '—'}</td>
         <td>
           <div class="action-row">
-            <div class="act-btn" onclick="openEditCategory(${c.category_id})" title="Edit"><i data-lucide="pencil"></i></div>
-            <div class="act-btn del" onclick="openDeleteCategory(${c.category_id})" title="Delete"><i data-lucide="trash-2"></i></div>
+            <div class="act-btn" onclick="event.stopPropagation(); openEditCategory(${c.category_id})" title="Edit"><i data-lucide="pencil"></i></div>
+            <div class="act-btn del" onclick="event.stopPropagation(); openDeleteCategory(${c.category_id})" title="Delete"><i data-lucide="trash-2"></i></div>
           </div>
         </td>
       </tr>
