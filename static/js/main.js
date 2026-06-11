@@ -9,6 +9,7 @@ let comparisonSearchQuery = '';
 let historySearchQuery = '';
 
 
+
 // ─── INIT ─────────────────────────────────────
 window.addEventListener('pywebviewready', function () {
   setCurrentDate();
@@ -1174,7 +1175,46 @@ function loadPriceComparison() {
       return;
     }
     renderComparisonPage();
-    makeSortable('comparison-table');
+     makeComparisonSortable();
+  });
+}
+
+function makeComparisonSortable() {
+  if (_sortableInitialized.has('comparison-table')) return;
+  _sortableInitialized.add('comparison-table');
+  const table = document.getElementById('comparison-table');
+  if (!table) return;
+  const headers = table.querySelectorAll('th');
+  const sortState = {};
+  const keys = ['product_name', 'product_unit', 'store_name', 'price', 'date_recorded'];
+
+  headers.forEach((th, colIndex) => {
+    th.style.cursor = 'pointer';
+    th.style.userSelect = 'none';
+    th.addEventListener('click', () => {
+      const asc = !sortState[colIndex];
+      sortState[colIndex] = asc;
+
+      headers.forEach(h => {
+        h.textContent = h.textContent.replace(' ↑', '').replace(' ↓', '');
+      });
+      th.textContent += asc ? ' ↑' : ' ↓';
+
+      const key = keys[colIndex];
+      allComparisonRecords.sort((a, b) => {
+        const aVal = a[key];
+        const bVal = b[key];
+        const aNum = parseFloat(aVal);
+        const bNum = parseFloat(bVal);
+        if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        return asc
+          ? String(aVal).localeCompare(String(bVal))
+          : String(bVal).localeCompare(String(aVal));
+      });
+
+      comparisonPage = 1;
+      renderComparisonPage();
+    });
   });
 }
 

@@ -370,4 +370,4 @@ def get_category_preview(category_id):
     return {
         "category": dict(category) if category else {},
         "products": [dict(p) for p in products]
-    }
+    }   
