@@ -8,8 +8,6 @@ let allPriceRecords = [];
 let comparisonSearchQuery = '';
 let historySearchQuery = '';
 
-
-
 // ─── INIT ─────────────────────────────────────
 window.addEventListener('pywebviewready', function () {
   setCurrentDate();
@@ -122,6 +120,9 @@ function filterTable(tableId, query) {
 
 const _sortableInitialized = new Set();
 
+// Keys matching column order in the history table
+const _historyKeys = ['product_name', 'store_name', 'product_unit', 'price', 'date_recorded'];
+
 function makeSortable(tableId) {
   if (_sortableInitialized.has(tableId)) return;
   _sortableInitialized.add(tableId);
@@ -137,36 +138,40 @@ function makeSortable(tableId) {
     th.addEventListener('click', () => {
       const tbody = table.querySelector('tbody');
       const rows  = Array.from(tbody.querySelectorAll('tr'));
-
-      // Skip empty rows
       if (rows.length === 1 && rows[0].querySelector('.empty-msg')) return;
 
       const asc = !sortState[colIndex];
       sortState[colIndex] = asc;
-
-      // Reset all headers
       headers.forEach(h => {
-        h.textContent = h.textContent.replace(' ↑', '').replace(' ↓', '');
+        h.textContent = h.textContent.replace(' \u2191', '').replace(' \u2193', '');
       });
-      th.textContent += asc ? ' ↑' : ' ↓';
+      th.textContent += asc ? ' \u2191' : ' \u2193';
 
+      // History table is paginated — sort the data array then re-render
+      if (tableId === 'history-table') {
+        const key = _historyKeys[colIndex];
+        allPriceRecords.sort((a, b) => {
+          const aVal = a[key], bVal = b[key];
+          const aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+          if (!isNaN(aVal) && !isNaN(bVal)) return asc ? aNum - bNum : bNum - aNum;
+          return asc
+            ? String(aVal).localeCompare(String(bVal))
+            : String(bVal).localeCompare(String(aVal));
+        });
+        currentPage = 1;
+        renderPriceHistoryPage();
+        return;
+      }
+
+      // Non-paginated tables — sort DOM rows directly
       rows.sort((a, b) => {
         const aText = (a.cells[colIndex]?.textContent || '').trim();
         const bText = (b.cells[colIndex]?.textContent || '').trim();
-
-        // Try numeric sort first
         const aNum = parseFloat(aText.replace(/[^0-9.]/g, ''));
         const bNum = parseFloat(bText.replace(/[^0-9.]/g, ''));
-
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-          return asc ? aNum - bNum : bNum - aNum;
-        }
-
-        return asc
-          ? aText.localeCompare(bText)
-          : bText.localeCompare(aText);
+        if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
       });
-
       rows.forEach(row => tbody.appendChild(row));
     });
   });
@@ -517,6 +522,7 @@ function submitEditCategory() {
     if (result.success) {
       hideModal('modal-category-edit');
       loadCategories();
+      loadProducts();
       loadDashboard();
       showToast('✅ ' + result.message);
     } else {
@@ -1180,8 +1186,7 @@ function loadPriceComparison() {
 }
 
 function makeComparisonSortable() {
-  if (_sortableInitialized.has('comparison-table')) return;
-  _sortableInitialized.add('comparison-table');
+  _sortableInitialized.delete('comparison-table');
   const table = document.getElementById('comparison-table');
   if (!table) return;
   const headers = table.querySelectorAll('th');
@@ -1206,7 +1211,7 @@ function makeComparisonSortable() {
         const bVal = b[key];
         const aNum = parseFloat(aVal);
         const bNum = parseFloat(bVal);
-        if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+        if (!isNaN(aVal) && !isNaN(bVal)) return asc ? aNum - bNum : bNum - aNum;
         return asc
           ? String(aVal).localeCompare(String(bVal))
           : String(bVal).localeCompare(String(aVal));
