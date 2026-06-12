@@ -141,7 +141,6 @@ const _historyKeys = ['product_name', 'store_name', 'product_unit', 'price', 'da
 function makeSortable(tableId) {
   if (_sortableInitialized.has(tableId)) return;
   _sortableInitialized.add(tableId);
-
   const table = document.getElementById(tableId);
   if (!table) return;
   const headers = table.querySelectorAll('th');
@@ -679,9 +678,13 @@ function submitAddProduct() {
     const result = JSON.parse(res);
     if (result.success) {
       hideModal('modal-product-add');
-      document.getElementById('add-prod-name').value  = '';
-      document.getElementById('add-prod-brand').value = '';
-      document.getElementById('add-prod-unit').value  = '';
+      document.getElementById('add-prod-name').value        = '';
+      document.getElementById('add-prod-brand').value       = '';
+      document.getElementById('add-prod-unit').value        = '';
+      document.getElementById('add-prod-unit-other').value  = '';
+      document.getElementById('add-prod-unit-other').style.display = 'none';
+      document.querySelectorAll('#add-prod-categories input[type="checkbox"]')
+        .forEach(cb => cb.checked = false);
       loadProducts();
       loadDashboard();
       showToast('✅ ' + result.message);
@@ -1002,6 +1005,10 @@ function submitAddPrice() {
   }
   if (!date) {
     showToast('Please select a date!', true); return;
+  }
+  const today = new Date().toISOString().split('T')[0];
+  if (date > today) {
+    showToast('Date cannot be in the future!', true); return;
   }
 
   return window.pywebview.api.add_price(

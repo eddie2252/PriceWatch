@@ -22,10 +22,10 @@ class API:
 
     def add_store(self, store_name, store_type, street, barangay, contact_number):
         try:
-            if database.store_exists(store_name, barangay):
+            if database.store_exists(store_name, store_type, barangay):
                 return json.dumps({
                     "success": False,
-                    "message": f"A store named '{store_name}' in {barangay} already exists!"
+                    "message": f"A {store_type} named '{store_name}' in {barangay} already exists!"
                 })
             database.add_store(store_name, store_type, street, barangay, contact_number)
             return json.dumps({"success": True, "message": "Store added successfully!"})
@@ -34,10 +34,10 @@ class API:
 
     def update_store(self, store_id, store_name, store_type, street, barangay, contact_number):
         try:
-            if database.store_exists_other(store_name, barangay, store_id):
+            if database.store_exists_other(store_name, store_type, barangay, store_id):
                 return json.dumps({
                     "success": False,
-                    "message": f"A store named '{store_name}' in {barangay} already exists!"
+                    "message": f"A {store_type} named '{store_name}' in {barangay} already exists!"
                 })
             database.update_store(store_id, store_name, store_type, street, barangay, contact_number)
             return json.dumps({"success": True, "message": "Store updated successfully!"})
