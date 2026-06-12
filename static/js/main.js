@@ -545,6 +545,7 @@ function submitDeleteCategory() {
     if (result.success) {
       hideModal('modal-category-delete');
       loadCategories();
+      loadProducts();
       loadDashboard();
       showToast('🗑️ ' + result.message);
     } else {
