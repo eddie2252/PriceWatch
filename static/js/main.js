@@ -14,13 +14,14 @@ let historyDateTo = '';
 window.addEventListener('pywebviewready', function () {
   setCurrentDate();
 
+
+  
   const loads = [
     loadDashboard(),
     loadStores(),
     loadProducts(),
     loadCategories(),
-    loadPriceHistory(),
-    loadPriceComparison(),
+    loadPriceHistory().then(() => loadPriceComparison()),
   ];
 
   Promise.allSettled(loads).then(() => {
@@ -29,6 +30,10 @@ window.addEventListener('pywebviewready', function () {
     setTimeout(() => loader.style.display = 'none', 400);
   });
 });
+
+function escAttr(s) {
+  return s.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;');
+}
 
 // ─── DATE ─────────────────────────────────────
 function formatDate(dateStr) {
@@ -923,7 +928,7 @@ function renderPriceHistoryPage() {
       <td>${formatDate(p.date_recorded)}</td>
       <td>
         <div class="action-row" onclick="event.stopPropagation()">
-          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${p.product_name}', '${p.store_name}')" title="Edit"><i data-lucide="pencil"></i></div>
+          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${escAttr(p.product_name)}', '${escAttr(p.store_name)}')" title="Edit"><i data-lucide="pencil"></i></div>
           <div class="act-btn del" onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')" title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
       </td>
@@ -1310,3 +1315,4 @@ function confirmLogout() {
     window.pywebview.api.quit_app();
   }
 }
+
