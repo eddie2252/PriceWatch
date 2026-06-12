@@ -884,15 +884,15 @@ function renderPriceHistoryPage() {
   const end        = start + PAGE_SIZE;
   const pageData   = filtered.slice(start, end);
 
-  if (filtered.length === 0 && (historySearchQuery !== '' || historyDateFrom || historyDateTo)) {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No records matching the current filter.</td></tr>`;
+  if (allPriceRecords.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No price records yet.</td></tr>';
     document.getElementById('pagination-info').textContent = '';
     document.getElementById('pagination-controls').innerHTML = '';
     return;
   }
 
-  if (allPriceRecords.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No price records yet.</td></tr>';
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No records matching the current filter.</td></tr>`;
     document.getElementById('pagination-info').textContent = '';
     document.getElementById('pagination-controls').innerHTML = '';
     return;
@@ -906,7 +906,7 @@ function renderPriceHistoryPage() {
       <td class="price-low">₱${parseFloat(p.price).toFixed(2)}</td>
       <td>${formatDate(p.date_recorded)}</td>
       <td>
-        <div class="action-row">
+        <div class="action-row" onclick="event.stopPropagation()">
           <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${p.product_name}', '${p.store_name}')" title="Edit"><i data-lucide="pencil"></i></div>
           <div class="act-btn del" onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')" title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
@@ -1017,14 +1017,12 @@ function openAddPriceModal() {
 }
 
 function openEditPrice(storeId, productId, date, currentPrice, productName, storeName) {
-  const p = allProducts.find(x => x.product_id === productId);
-  const s = allStores.find(x => x.store_id === storeId);
   document.getElementById('edit-price-store-id').value    = storeId;
   document.getElementById('edit-price-product-id').value  = productId;
   document.getElementById('edit-price-date').value        = date;
   document.getElementById('edit-price-amount').value      = currentPrice;
-  document.getElementById('edit-price-product-name').textContent = p ? p.product_name : '';
-  document.getElementById('edit-price-store-name').textContent   = s ? s.store_name : '';
+  document.getElementById('edit-price-product-name').textContent = productName;
+  document.getElementById('edit-price-store-name').textContent   = storeName;
   document.getElementById('edit-price-date-display').textContent = formatDate(date);
   showModal('modal-price-edit');
 }
