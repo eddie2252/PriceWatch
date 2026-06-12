@@ -313,6 +313,13 @@
             <button class="btn-primary" onclick="openAddPriceModal()"><i data-lucide="plus"></i> Record Price</button>
           </div>
         </div>
+        <div class="date-range-bar">
+          <span class="date-range-label">Date range:</span>
+          <input type="date" id="history-date-from" class="date-range-input" onchange="applyDateFilter()">
+          <span class="date-range-sep">→</span>
+          <input type="date" id="history-date-to" class="date-range-input" onchange="applyDateFilter()">
+          <button class="btn-ghost-sm" id="clear-date-btn" onclick="clearDateFilter()" style="display:none">✕ Clear</button>
+        </div>
         <div class="panel">
           <table class="tbl" id="history-table">
             <thead>

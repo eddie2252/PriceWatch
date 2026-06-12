@@ -7,6 +7,8 @@ const PAGE_SIZE = 10;
 let allPriceRecords = [];
 let comparisonSearchQuery = '';
 let historySearchQuery = '';
+let historyDateFrom = '';
+let historyDateTo = '';
 
 // ─── INIT ─────────────────────────────────────
 window.addEventListener('pywebviewready', function () {
@@ -682,7 +684,18 @@ function openEditProduct(prodId) {
   document.getElementById('edit-prod-id').value    = p.product_id;
   document.getElementById('edit-prod-name').value  = p.product_name;
   document.getElementById('edit-prod-brand').value = p.product_brand;
-  document.getElementById('edit-prod-unit').value  = p.product_unit;
+  const knownUnits = ['per piece','per kg','per pack','per liter','per dozen','per box','per sachet','per bottle','per can'];
+  const unitSelect = document.getElementById('edit-prod-unit');
+  const unitOther  = document.getElementById('edit-prod-unit-other');
+  if (knownUnits.includes(p.product_unit)) {
+    unitSelect.value = p.product_unit;
+    unitOther.style.display = 'none';
+    unitOther.value = '';
+  } else {
+    unitSelect.value = 'other';
+    unitOther.style.display = 'block';
+    unitOther.value = p.product_unit;
+  }
 
   // Preview
   document.getElementById('edit-prod-preview-name').textContent = p.product_name;
@@ -852,22 +865,27 @@ function loadPriceHistory() {
 }
 
 function renderPriceHistoryPage() {
-  const tbody      = document.getElementById('history-tbody');
-  const filtered   = historySearchQuery === '' ? allPriceRecords : allPriceRecords.filter(p =>
-    p.product_name.toLowerCase().includes(historySearchQuery) ||
-    p.store_name.toLowerCase().includes(historySearchQuery) ||
-    p.product_unit.toLowerCase().includes(historySearchQuery) ||
-    parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
-    p.date_recorded.includes(historySearchQuery) ||
-    formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
-  );
+  const tbody = document.getElementById('history-tbody');
+  const filtered = allPriceRecords.filter(p => {
+    const matchesSearch = historySearchQuery === '' || (
+      p.product_name.toLowerCase().includes(historySearchQuery) ||
+      p.store_name.toLowerCase().includes(historySearchQuery) ||
+      p.product_unit.toLowerCase().includes(historySearchQuery) ||
+      parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
+      p.date_recorded.includes(historySearchQuery) ||
+      formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
+    );
+    const matchesFrom = !historyDateFrom || p.date_recorded >= historyDateFrom;
+    const matchesTo   = !historyDateTo   || p.date_recorded <= historyDateTo;
+    return matchesSearch && matchesFrom && matchesTo;
+  });
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const start      = (currentPage - 1) * PAGE_SIZE;
   const end        = start + PAGE_SIZE;
   const pageData   = filtered.slice(start, end);
 
-  if (filtered.length === 0 && historySearchQuery !== '') {
-    tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No records matching "${historySearchQuery}".</td></tr>`;
+  if (filtered.length === 0 && (historySearchQuery !== '' || historyDateFrom || historyDateTo)) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty-msg">No records matching the current filter.</td></tr>`;
     document.getElementById('pagination-info').textContent = '';
     document.getElementById('pagination-controls').innerHTML = '';
     return;
@@ -889,7 +907,7 @@ function renderPriceHistoryPage() {
       <td>${formatDate(p.date_recorded)}</td>
       <td>
         <div class="action-row">
-          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, ${p.product_id})" title="Edit"><i data-lucide="pencil"></i></div>
+          <div class="act-btn" onclick="openEditPrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}', ${p.price}, '${p.product_name}', '${p.store_name}')" title="Edit"><i data-lucide="pencil"></i></div>
           <div class="act-btn del" onclick="openDeletePrice(${p.store_id}, ${p.product_id}, '${p.date_recorded}')" title="Delete"><i data-lucide="trash-2"></i></div>
         </div>
       </td>
@@ -897,8 +915,9 @@ function renderPriceHistoryPage() {
   `).join('');
 
   // Pagination info
-  document.getElementById('pagination-info').textContent = historySearchQuery
-    ? `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} results for "${historySearchQuery}"`
+  const isFiltered = historySearchQuery !== '' || historyDateFrom || historyDateTo;
+  document.getElementById('pagination-info').textContent = isFiltered
+    ? `Showing ${start + 1}–${Math.min(end, filtered.length)} of ${filtered.length} filtered records`
     : `Showing ${start + 1}–${Math.min(end, allPriceRecords.length)} of ${allPriceRecords.length} records`;
 
   // Pagination buttons
@@ -914,16 +933,41 @@ function renderPriceHistoryPage() {
 }
 
 function changePage(direction) {
-  const filtered = historySearchQuery === '' ? allPriceRecords : allPriceRecords.filter(p =>
-    p.product_name.toLowerCase().includes(historySearchQuery) ||
-    p.store_name.toLowerCase().includes(historySearchQuery) ||
-    p.product_unit.toLowerCase().includes(historySearchQuery) ||
-    parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
-    p.date_recorded.includes(historySearchQuery) ||
-    formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
-  );
+  const filtered = allPriceRecords.filter(p => {
+    const matchesSearch = historySearchQuery === '' || (
+      p.product_name.toLowerCase().includes(historySearchQuery) ||
+      p.store_name.toLowerCase().includes(historySearchQuery) ||
+      p.product_unit.toLowerCase().includes(historySearchQuery) ||
+      parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
+      p.date_recorded.includes(historySearchQuery) ||
+      formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
+    );
+    const matchesFrom = !historyDateFrom || p.date_recorded >= historyDateFrom;
+    const matchesTo   = !historyDateTo   || p.date_recorded <= historyDateTo;
+    return matchesSearch && matchesFrom && matchesTo;
+  });
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   currentPage = Math.max(1, Math.min(totalPages, currentPage + direction));
+  renderPriceHistoryPage();
+}
+
+function applyDateFilter() {
+  historyDateFrom = document.getElementById('history-date-from').value;
+  historyDateTo   = document.getElementById('history-date-to').value;
+  const clearBtn  = document.getElementById('clear-date-btn');
+  if (clearBtn) clearBtn.style.display = (historyDateFrom || historyDateTo) ? 'inline-block' : 'none';
+  currentPage = 1;
+  renderPriceHistoryPage();
+}
+
+function clearDateFilter() {
+  historyDateFrom = '';
+  historyDateTo   = '';
+  document.getElementById('history-date-from').value = '';
+  document.getElementById('history-date-to').value   = '';
+  const clearBtn = document.getElementById('clear-date-btn');
+  if (clearBtn) clearBtn.style.display = 'none';
+  currentPage = 1;
   renderPriceHistoryPage();
 }
 
@@ -1066,6 +1110,14 @@ function renderComparisonPage() {
     if (!highestMap[name] || p.price > highestMap[name]) highestMap[name] = p.price;
   });
 
+  // Build previous price map from history (allPriceRecords is sorted date DESC)
+  const prevPriceMap = {};
+  const latestSeen = new Set();
+  allPriceRecords.forEach(r => {
+    const key = `${r.store_id}_${r.product_id}`;
+    if (!latestSeen.has(key)) { latestSeen.add(key); }
+    else if (!(key in prevPriceMap)) { prevPriceMap[key] = r.price; }
+  });
   // Tag each row
   const tagged = allComparisonRecords.map(p => {
     const onlyOne   = lowestMap[p.product_name] === highestMap[p.product_name];
@@ -1085,7 +1137,13 @@ function renderComparisonPage() {
     } else {
       rowClass = ''; priceClass = 'price-mid'; badge = '';
     }
-    return { ...p, rowClass, priceClass, badge };
+    const tKey = `${p.store_id}_${p.product_id}`;
+    const prev = prevPriceMap[tKey];
+    const trend = prev === undefined ? '' :
+      p.price < prev ? `<span class="trend-down" title="Down from ₱${prev.toFixed(2)}">↓</span>` :
+      p.price > prev ? `<span class="trend-up"   title="Up from ₱${prev.toFixed(2)}">↑</span>` :
+                       `<span class="trend-flat"  title="No change">—</span>`;
+    return { ...p, rowClass, priceClass, badge, trend };
   });
 
   // Apply filter + search together
@@ -1130,6 +1188,7 @@ function renderComparisonPage() {
       </td>
       <td class="${p.priceClass}">
         ₱${parseFloat(p.price).toFixed(2)}
+        ${p.trend}
         <span style="margin-left:6px">${p.badge}</span>
       </td>
       <td>${formatDate(p.date_recorded)}</td>
