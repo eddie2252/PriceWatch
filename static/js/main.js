@@ -249,11 +249,11 @@ function loadStores() {
     allStores = JSON.parse(res);
     const tbody = document.getElementById('stores-tbody');
 
+    setRecordCount('stores-count', allStores.length, 'stores');
     if (allStores.length === 0) {
       tbody.innerHTML = '<tr><td colspan="7" class="empty-msg">No stores yet. Click Add Store!</td></tr>';
       return;
     }
-    setRecordCount('stores-count', allStores.length, 'stores');
     tbody.innerHTML = allStores.map((s, i) => `
       <tr class="clickable" onclick="openStorePreview(${s.store_id})">
         <td>${i + 1}</td>
@@ -449,11 +449,11 @@ function loadCategories() {
     allCategories = JSON.parse(res);
     const tbody = document.getElementById('categories-tbody');
 
+    setRecordCount('categories-count', allCategories.length, 'categories');
     if (allCategories.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" class="empty-msg">No categories yet. Click Add Category!</td></tr>';
       return;
     }
-    setRecordCount('categories-count', allCategories.length, 'categories');
     tbody.innerHTML = allCategories.map((c, i) => `
       <tr class="clickable" onclick="openCategoryPreview(${c.category_id})">
         <td>${i + 1}</td>
@@ -615,11 +615,11 @@ function loadProducts() {
     allProducts = JSON.parse(res);
     const tbody = document.getElementById('products-tbody');
 
+    setRecordCount('products-count', allProducts.length, 'products');
     if (allProducts.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">No products yet. Click Add Product!</td></tr>';
       return;
     }
-    setRecordCount('products-count', allProducts.length, 'products');
     tbody.innerHTML = allProducts.map((p, i) => `
       <tr class="clickable" onclick="openProductPreview(${p.product_id})">
         <td>${i + 1}</td>
