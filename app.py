@@ -77,6 +77,13 @@ class API:
 
     def update_category(self, category_id, category_name, category_description):
         try:
+            existing = database.get_all_categories()
+            for c in existing:
+                if c['category_name'].lower() == category_name.lower() and c['category_id'] != category_id:
+                    return json.dumps({
+                        "success": False,
+                        "message": f"Category '{category_name}' already exists!"
+                    })
             database.update_category(category_id, category_name, category_description)
             return json.dumps({"success": True, "message": "Category updated successfully!"})
         except Exception as e:
@@ -101,10 +108,10 @@ class API:
 
     def add_product(self, product_name, product_unit, product_brand, category_ids):
         try:
-            if database.product_exists(product_name, product_brand):
+            if database.product_exists(product_name, product_brand, product_unit):
                 return json.dumps({
                     "success": False,
-                    "message": f"Product '{product_name}' by '{product_brand}' already exists!"
+                    "message": f"Product '{product_name}' by '{product_brand}' ({product_unit}) already exists!"
                 })
             database.add_product(product_name, product_unit, product_brand, category_ids)
             return json.dumps({"success": True, "message": "Product added successfully!"})
@@ -113,6 +120,11 @@ class API:
 
     def update_product(self, product_id, product_name, product_unit, product_brand, category_ids):
         try:
+            if database.product_exists_other(product_name, product_brand, product_unit, product_id):
+                return json.dumps({
+                    "success": False,
+                    "message": f"Product '{product_name}' by '{product_brand}' ({product_unit}) already exists!"
+                })
             database.update_product(product_id, product_name, product_unit, product_brand, category_ids)
             return json.dumps({"success": True, "message": "Product updated successfully!"})
         except Exception as e:
@@ -130,6 +142,8 @@ class API:
             return json.dumps(database.get_product_preview(product_id))
         except Exception as e:
             return json.dumps({"error": str(e)})    
+        
+        
 
     # ─── PRICES ───────────────────────────────────────────
     def get_all_prices(self):

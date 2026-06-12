@@ -280,13 +280,27 @@ def store_exists_other(store_name, barangay, store_id):
     conn.close()
     return result > 0
 
-def product_exists(product_name, product_brand):
+def product_exists(product_name, product_brand, product_unit):
     conn = get_connection()
     result = conn.execute(
         """SELECT COUNT(*) FROM product 
            WHERE LOWER(product_name) = LOWER(?) 
-           AND LOWER(product_brand) = LOWER(?)""",
-        (product_name, product_brand)
+           AND LOWER(product_brand) = LOWER(?)
+           AND LOWER(product_unit) = LOWER(?)""",
+        (product_name, product_brand, product_unit)
+    ).fetchone()[0]
+    conn.close()
+    return result > 0
+
+def product_exists_other(product_name, product_brand, product_unit, product_id):
+    conn = get_connection()
+    result = conn.execute(
+        """SELECT COUNT(*) FROM product 
+           WHERE LOWER(product_name) = LOWER(?) 
+           AND LOWER(product_brand) = LOWER(?)
+           AND LOWER(product_unit) = LOWER(?)
+           AND product_id != ?""",
+        (product_name, product_brand, product_unit, product_id)
     ).fetchone()[0]
     conn.close()
     return result > 0

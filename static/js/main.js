@@ -113,10 +113,23 @@ function filterTable(tableId, query) {
   }
 
   const table = document.getElementById(tableId);
-  const rows = table.querySelectorAll('tbody tr');
+  const tbody = table.querySelector('tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.dataset.emptyMsg);
   rows.forEach(row => {
     row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
+
+  const existingMsg = tbody.querySelector('tr[data-empty-msg]');
+  if (existingMsg) existingMsg.remove();
+
+  const anyVisible = rows.some(r => r.style.display !== 'none');
+  if (!anyVisible && q !== '') {
+    const colspan = tbody.closest('table').querySelectorAll('thead th').length;
+    const msg = document.createElement('tr');
+    msg.dataset.emptyMsg = '1';
+    msg.innerHTML = `<td colspan="${colspan}" class="empty-msg">No results matching "${q}"</td>`;
+    tbody.appendChild(msg);
+  }
 }
 
 
@@ -649,7 +662,7 @@ function submitAddProduct() {
   const brand = document.getElementById('add-prod-brand').value.trim();
   const unitSelect = document.getElementById('add-prod-unit').value;
   const unit = unitSelect === 'other'
-    ? document.getElementById('add-prod-unit-other').value.trim()
+    ? document.getElementById('add-prod-unit-other').value.trim().toLowerCase()
     : unitSelect;
   if (!unit) { showToast('Please specify a unit!', true); return; }
   const checks = document.querySelectorAll('#add-prod-categories input[type="checkbox"]:checked');
@@ -717,7 +730,7 @@ function submitEditProduct() {
   const brand = document.getElementById('edit-prod-brand').value.trim();
   const unitSelect = document.getElementById('edit-prod-unit').value;
   const unit = unitSelect === 'other'
-    ? document.getElementById('edit-prod-unit-other').value.trim()
+    ? document.getElementById('edit-prod-unit-other').value.trim().toLowerCase()
     : unitSelect;
   if (!unit) { showToast('Please specify a unit!', true); return; }
   const checks = document.querySelectorAll('#edit-prod-categories input[type="checkbox"]:checked');
