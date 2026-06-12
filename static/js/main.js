@@ -1187,7 +1187,7 @@ function loadPriceComparison() {
 }
 
 function makeComparisonSortable() {
-  _sortableInitialized.delete('comparison-table');
+  if (_sortableInitialized.has('comparison-table')) return;
   const table = document.getElementById('comparison-table');
   if (!table) return;
   const headers = table.querySelectorAll('th');
