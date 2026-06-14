@@ -170,13 +170,16 @@ function makeSortable(tableId) {
       if (tableId === 'history-table') {
         const key = _historyKeys[colIndex];
         allPriceRecords.sort((a, b) => {
-          const aVal = a[key], bVal = b[key];
-          const aNum = parseFloat(aVal), bNum = parseFloat(bVal);
-          if (!isNaN(aVal) && !isNaN(bVal)) return asc ? aNum - bNum : bNum - aNum;
-          return asc
-            ? String(aVal).localeCompare(String(bVal))
-            : String(bVal).localeCompare(String(aVal));
-        });
+  const aVal = a[key], bVal = b[key];
+  if (key === 'date_recorded') {
+    return asc ? String(aVal).localeCompare(String(bVal)) : String(bVal).localeCompare(String(aVal));
+  }
+  const aNum = parseFloat(aVal), bNum = parseFloat(bVal);
+  if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+  return asc
+    ? String(aVal).localeCompare(String(bVal))
+    : String(bVal).localeCompare(String(aVal));
+});
         currentPage = 1;
         renderPriceHistoryPage();
         return;
@@ -1290,15 +1293,18 @@ function makeComparisonSortable() {
 
       const key = keys[colIndex];
       allComparisonRecords.sort((a, b) => {
-        const aVal = a[key];
-        const bVal = b[key];
-        const aNum = parseFloat(aVal);
-        const bNum = parseFloat(bVal);
-        if (!isNaN(aVal) && !isNaN(bVal)) return asc ? aNum - bNum : bNum - aNum;
-        return asc
-          ? String(aVal).localeCompare(String(bVal))
-          : String(bVal).localeCompare(String(aVal));
-      });
+  const aVal = a[key];
+  const bVal = b[key];
+  if (key === 'date_recorded') {
+    return asc ? String(aVal).localeCompare(String(bVal)) : String(bVal).localeCompare(String(aVal));
+  }
+  const aNum = parseFloat(aVal);
+  const bNum = parseFloat(bVal);
+  if (!isNaN(aNum) && !isNaN(bNum)) return asc ? aNum - bNum : bNum - aNum;
+  return asc
+    ? String(aVal).localeCompare(String(bVal))
+    : String(bVal).localeCompare(String(aVal));
+});
 
       comparisonPage = 1;
       renderComparisonPage();
