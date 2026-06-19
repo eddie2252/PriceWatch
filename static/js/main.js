@@ -43,6 +43,12 @@ function formatDate(dateStr) {
     year: 'numeric', month: 'short', day: 'numeric'
   });
 }
+function buildSearchKey(p) {
+  return [
+    p.product_name, p.store_name, p.product_unit,
+    parseFloat(p.price).toFixed(2), p.date_recorded, formatDate(p.date_recorded)
+  ].join(' ').toLowerCase();
+}
 
 function setCurrentDate() {
   const now = new Date();
@@ -917,6 +923,7 @@ function openStoreProductHistory(storeId, productId) {
 function loadPriceHistory() {
   return window.pywebview.api.get_all_prices().then(res => {
     allPriceRecords = JSON.parse(res);
+    allPriceRecords.forEach(p => { p._search = buildSearchKey(p); });
     currentPage = 1;
     historySearchQuery = '';
     renderPriceHistoryPage();
@@ -927,14 +934,7 @@ function loadPriceHistory() {
 function renderPriceHistoryPage() {
   const tbody = document.getElementById('history-tbody');
   const filtered = allPriceRecords.filter(p => {
-    const matchesSearch = historySearchQuery === '' || (
-      p.product_name.toLowerCase().includes(historySearchQuery) ||
-      p.store_name.toLowerCase().includes(historySearchQuery) ||
-      p.product_unit.toLowerCase().includes(historySearchQuery) ||
-      parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
-      p.date_recorded.includes(historySearchQuery) ||
-      formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
-    );
+    const matchesSearch = historySearchQuery === '' || p._search.includes(historySearchQuery);
     const matchesFrom = !historyDateFrom || p.date_recorded >= historyDateFrom;
     const matchesTo   = !historyDateTo   || p.date_recorded <= historyDateTo;
     return matchesSearch && matchesFrom && matchesTo;
@@ -994,14 +994,7 @@ function renderPriceHistoryPage() {
 
 function changePage(direction) {
   const filtered = allPriceRecords.filter(p => {
-    const matchesSearch = historySearchQuery === '' || (
-      p.product_name.toLowerCase().includes(historySearchQuery) ||
-      p.store_name.toLowerCase().includes(historySearchQuery) ||
-      p.product_unit.toLowerCase().includes(historySearchQuery) ||
-      parseFloat(p.price).toFixed(2).includes(historySearchQuery) ||
-      p.date_recorded.includes(historySearchQuery) ||
-      formatDate(p.date_recorded).toLowerCase().includes(historySearchQuery)
-    );
+    const matchesSearch = historySearchQuery === '' || p._search.includes(historySearchQuery);
     const matchesFrom = !historyDateFrom || p.date_recorded >= historyDateFrom;
     const matchesTo   = !historyDateTo   || p.date_recorded <= historyDateTo;
     return matchesSearch && matchesFrom && matchesTo;
@@ -1215,14 +1208,7 @@ function renderComparisonPage() {
       comparisonFilter === 'expensive' ? (p.rowClass === 'row-highest' || p.rowClass === 'row-only') :
       true;
 
-    const matchesSearch = comparisonSearchQuery === '' || (
-      p.product_name.toLowerCase().includes(comparisonSearchQuery) ||
-      p.store_name.toLowerCase().includes(comparisonSearchQuery) ||
-      p.product_unit.toLowerCase().includes(comparisonSearchQuery) ||
-      parseFloat(p.price).toFixed(2).includes(comparisonSearchQuery) ||
-      p.date_recorded.includes(comparisonSearchQuery) ||
-      formatDate(p.date_recorded).toLowerCase().includes(comparisonSearchQuery)
-    );
+    const matchesSearch = comparisonSearchQuery === '' || p._search.includes(comparisonSearchQuery);
 
     return matchesFilter && matchesSearch;
   });
@@ -1293,6 +1279,7 @@ function changeCompPage(direction) {
 function loadPriceComparison() {
   return window.pywebview.api.get_price_comparison().then(res => {
     allComparisonRecords = JSON.parse(res);
+    allComparisonRecords.forEach(p => { p._search = buildSearchKey(p); });
     comparisonPage = 1;
     comparisonSearchQuery = '';
     if (allComparisonRecords.length === 0) {
