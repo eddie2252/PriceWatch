@@ -641,6 +641,11 @@ body {
   max-width: 560px;
 }
 
+.modal-preview-lg .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
 .preview-info-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

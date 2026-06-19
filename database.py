@@ -365,9 +365,15 @@ def get_product_preview(product_id):
         SELECT s.store_name, p.price, p.date_recorded
         FROM price p
         JOIN store s ON p.store_id = s.store_id
+        INNER JOIN (
+            SELECT store_id, MAX(date_recorded) AS latest
+            FROM price
+            WHERE product_id = ?
+            GROUP BY store_id
+        ) lt ON p.store_id = lt.store_id AND p.date_recorded = lt.latest
         WHERE p.product_id = ?
         ORDER BY p.price ASC
-    """, (product_id,)).fetchall()
+    """, (product_id, product_id)).fetchall()
     conn.close()
     return {
         "product":    dict(product) if product else {},
