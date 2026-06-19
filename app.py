@@ -142,6 +142,12 @@ class API:
             return json.dumps(database.get_product_preview(product_id))
         except Exception as e:
             return json.dumps({"error": str(e)})    
+
+    def get_store_product_history(self, store_id, product_id):
+        try:
+            return json.dumps(database.get_store_product_history(store_id, product_id))
+        except Exception as e:
+            return json.dumps({"error": str(e)}) 
         
         
 

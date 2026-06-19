@@ -362,7 +362,7 @@ def get_product_preview(product_id):
         WHERE cl.product_id = ?
     """, (product_id,)).fetchall()
     prices = conn.execute("""
-        SELECT s.store_name, p.price, p.date_recorded
+        SELECT s.store_id, s.store_name, p.price, p.date_recorded
         FROM price p
         JOIN store s ON p.store_id = s.store_id
         INNER JOIN (
@@ -379,6 +379,27 @@ def get_product_preview(product_id):
         "product":    dict(product) if product else {},
         "categories": [c["category_name"] for c in categories],
         "prices":     [dict(p) for p in prices]
+    }
+
+def get_store_product_history(store_id, product_id):
+    conn = get_connection()
+    store = conn.execute(
+        "SELECT store_name FROM store WHERE store_id = ?", (store_id,)
+    ).fetchone()
+    product = conn.execute(
+        "SELECT product_name FROM product WHERE product_id = ?", (product_id,)
+    ).fetchone()
+    history = conn.execute("""
+        SELECT price, date_recorded
+        FROM price
+        WHERE store_id = ? AND product_id = ?
+        ORDER BY date_recorded DESC
+    """, (store_id, product_id)).fetchall()
+    conn.close()
+    return {
+        "store_name":   store["store_name"] if store else "",
+        "product_name": product["product_name"] if product else "",
+        "history":      [dict(h) for h in history]
     }
 
 def get_category_preview(category_id):

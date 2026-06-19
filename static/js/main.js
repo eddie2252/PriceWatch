@@ -847,8 +847,8 @@ function openProductPreview(productId) {
       tbody.innerHTML = data.prices.map((pr, i) => {
         const isLowest = pr.price === lowestPrice;
         return `
-          <tr>
-            <td>${pr.store_name}</td>
+          <tr class="clickable" onclick="openStoreProductHistory(${pr.store_id}, ${productId})">
+            <td>${pr.store_name} <i data-lucide="external-link" style="width:11px;height:11px;vertical-align:middle;opacity:0.5;"></i></td>
             <td class="${isLowest ? 'price-low' : 'price-mid'}">
               ₱${parseFloat(pr.price).toFixed(2)}
               ${isLowest ? '<span class="badge badge-green" style="margin-left:6px">Cheapest</span>' : ''}
@@ -875,9 +875,45 @@ function openProductPreview(productId) {
   });
 }
 
+
+
 // ══════════════════════════════════════════════
 // PRICE HISTORY
 // ══════════════════════════════════════════════
+
+function openStoreProductHistory(storeId, productId) {
+  return window.pywebview.api.get_store_product_history(storeId, productId).then(res => {
+    const data = JSON.parse(res);
+    document.getElementById('history-modal-title').textContent = data.product_name;
+    document.getElementById('history-modal-subtitle').textContent = data.store_name;
+
+    const tbody = document.getElementById('store-history-tbody');
+    if (data.history.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" class="empty-msg">No history for this store.</td></tr>';
+    } else {
+      tbody.innerHTML = data.history.map((h, i) => {
+        const prev = data.history[i + 1]; // next row = older date, since sorted DESC
+        let change = '<span class="trend-flat" title="First recorded price">—</span>';
+        if (prev) {
+          if (h.price < prev.price) change = `<span class="trend-down" title="Down from ₱${prev.price.toFixed(2)}">↓ ₱${(prev.price - h.price).toFixed(2)}</span>`;
+          else if (h.price > prev.price) change = `<span class="trend-up" title="Up from ₱${prev.price.toFixed(2)}">↑ ₱${(h.price - prev.price).toFixed(2)}</span>`;
+          else change = '<span class="trend-flat" title="No change">—</span>';
+        }
+        return `
+          <tr>
+            <td>${formatDate(h.date_recorded)}</td>
+            <td>₱${parseFloat(h.price).toFixed(2)}</td>
+            <td>${change}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    showModal('modal-store-product-history');
+    renderIcons();
+  });
+}
+
 function loadPriceHistory() {
   return window.pywebview.api.get_all_prices().then(res => {
     allPriceRecords = JSON.parse(res);

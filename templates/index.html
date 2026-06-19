@@ -1146,6 +1146,38 @@
   </div>
 </div>
 
+<div class="overlay" id="modal-store-product-history">
+  <div class="modal modal-preview-lg">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <i data-lucide="trending-up" class="modal-header-icon"></i>
+        <div>
+          <div class="modal-title" id="history-modal-title">Price History</div>
+          <div class="modal-subtitle" id="history-modal-subtitle"></div>
+        </div>
+      </div>
+      <div class="modal-close" onclick="hideModal('modal-store-product-history')">✕</div>
+    </div>
+    <div class="modal-body">
+      <table class="tbl" id="store-history-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Price</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody id="store-history-tbody">
+          <tr><td colspan="3" class="empty-msg">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="hideModal('modal-store-product-history')">Close</button>
+    </div>
+  </div>
+</div>
+
 <div id="app-loader">
   <div class="loader-content">
     <div class="loader-spinner"></div>
