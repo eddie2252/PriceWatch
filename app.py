@@ -160,7 +160,13 @@ class API:
 
     def add_price(self, store_id, product_id, date_recorded, price):
         try:
+            old_price = database.get_existing_price(store_id, product_id, date_recorded)
             database.add_price(store_id, product_id, date_recorded, float(price))
+            if old_price is not None:
+                return json.dumps({
+                    "success": True,
+                    "message": f"Updated — this date already had ₱{old_price:.2f}, now ₱{float(price):.2f}."
+                })
             return json.dumps({"success": True, "message": "Price recorded successfully!"})
         except Exception as e:
             return json.dumps({"success": False, "message": str(e)})

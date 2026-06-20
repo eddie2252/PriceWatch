@@ -1257,13 +1257,14 @@ function renderComparisonPage() {
 }
 
 function changeCompPage(direction) {
+  const lowestMap  = {};
+  const highestMap = {};
+  allComparisonRecords.forEach(x => {
+    if (!lowestMap[x.product_name]  || x.price < lowestMap[x.product_name])  lowestMap[x.product_name]  = x.price;
+    if (!highestMap[x.product_name] || x.price > highestMap[x.product_name]) highestMap[x.product_name] = x.price;
+  });
+
   const filtered = allComparisonRecords.filter(p => {
-    const lowestMap  = {};
-    const highestMap = {};
-    allComparisonRecords.forEach(x => {
-      if (!lowestMap[x.product_name]  || x.price < lowestMap[x.product_name])  lowestMap[x.product_name]  = x.price;
-      if (!highestMap[x.product_name] || x.price > highestMap[x.product_name]) highestMap[x.product_name] = x.price;
-    });
     const onlyOne   = lowestMap[p.product_name] === highestMap[p.product_name];
     const isLowest  = p.price === lowestMap[p.product_name];
     const isHighest = p.price === highestMap[p.product_name];

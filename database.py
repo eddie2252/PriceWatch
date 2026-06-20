@@ -312,6 +312,15 @@ def product_exists_other(product_name, product_brand, product_unit, product_id):
     conn.close()
     return result > 0
 
+def get_existing_price(store_id, product_id, date_recorded):
+    conn = get_connection()
+    row = conn.execute(
+        "SELECT price FROM price WHERE store_id=? AND product_id=? AND date_recorded=?",
+        (store_id, product_id, date_recorded)
+    ).fetchone()
+    conn.close()
+    return row["price"] if row else None
+
 def category_exists(category_name):
     conn = get_connection()
     result = conn.execute(
